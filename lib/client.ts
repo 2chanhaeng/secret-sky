@@ -5,10 +5,20 @@ import {
 } from "@atproto/oauth-client-node";
 import { JoseKey } from "@atproto/jwk-jose";
 import { EncryptedCookie } from "./secure";
+import { CALLBACK_URL, PUBLIC_URL, URL_BASE } from "./url";
 
-const client_id = `http://localhost?redirect_uri=${
-  encodeURIComponent("http://127.0.0.1:3000/auth/callback/atproto")
-}&scope=${encodeURIComponent("atproto transition:generic")}`;
+const scopes = ["atproto", "transition:generic"];
+const scope = scopes.join(" ");
+const getLocalClientId = () =>
+  [
+    "http://localhost?redirect_uri=",
+    encodeURIComponent(CALLBACK_URL),
+    "&scope=",
+    encodeURIComponent(scope),
+  ].join("");
+const client_id = PUBLIC_URL
+  ? `${URL_BASE}/client-metadata.json`
+  : getLocalClientId();
 
 const getJoseEcKey = async (
   key: string,
@@ -38,20 +48,20 @@ const client = new NodeOAuthClient({
   clientMetadata: {
     // Must be a URL that will be exposing this metadata
     client_id,
-    scope: "atproto transition:generic",
+    scope,
     client_name: "My App",
-    client_uri: "http://127.0.0.1:3000",
-    logo_uri: "http://127.0.0.1:3000/logo.png",
-    tos_uri: "http://127.0.0.1:3000/tos",
-    policy_uri: "http://127.0.0.1:3000/policy",
-    redirect_uris: ["http://127.0.0.1:3000/auth/callback/atproto"],
+    client_uri: URL_BASE,
+    logo_uri: `${URL_BASE}/logo.png`,
+    tos_uri: `${URL_BASE}/tos`,
+    policy_uri: `${URL_BASE}/policy`,
+    redirect_uris: [CALLBACK_URL],
     grant_types: ["authorization_code", "refresh_token"],
     response_types: ["code"],
     application_type: "web",
     token_endpoint_auth_method: "private_key_jwt",
     token_endpoint_auth_signing_alg: "ES256",
     dpop_bound_access_tokens: true,
-    jwks_uri: "http://127.0.0.1:3000/jwks.json",
+    jwks_uri: `${URL_BASE}/jwks.json`,
   },
 
   // Used to authenticate the client to the token endpoint. Will be used to
