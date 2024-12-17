@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "prebuild": "yarn tsx prebuild/index.ts",
     "lint": "next lint"
   },
   "dependencies": {
