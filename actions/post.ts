@@ -8,6 +8,7 @@ import prisma from "@/prisma";
 import { Facet } from "@/types/bsky";
 import { Agent, RichText } from "@atproto/api";
 import { ReplyRef } from "@atproto/api/dist/client/types/app/bsky/feed/post";
+import { redirect } from "next/navigation";
 
 export const post = async (form: FormData) => {
   const agent = await getAgent(client);
@@ -20,7 +21,7 @@ export const post = async (form: FormData) => {
   const uri = await createPost(agent)({ encrypted, id, open, parent });
   await prisma.post.update({ where: { id }, data: { uri } });
   const href = uriToUrl(uri);
-  console.log({ href });
+  redirect(href);
 };
 
 const getOrCreateKey: //

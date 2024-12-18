@@ -37,7 +37,6 @@ export default async function PostPage({
   );
   if (!link) notFound();
   const encrypted = new URLSearchParams(link.uri.split("?")[1]).get("value");
-  console.log({ link: link.uri, encrypted });
   if (!encrypted) notFound();
   const content = await decrypt(encrypted, key, iv);
 
