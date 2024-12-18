@@ -34,7 +34,7 @@ export async function encrypt(
     encoded,
   );
 
-  return { iv: bufToB64(iv), encrypted: bufToB64(encrypted) };
+  return { iv: bufToB64(iv.buffer), encrypted: bufToB64(encrypted) };
 }
 
 export async function decrypt(
