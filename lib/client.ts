@@ -28,7 +28,11 @@ const getJoseEcKey = async (
 const keyset = await Promise.all(
   Array.from(
     { length: 3 },
-    (_, i) => getJoseEcKey(process.env[`ECDSA_${i + 1}_PRIVATE_KEY`] ?? ""),
+    (_, i) =>
+      getJoseEcKey(
+        process.env[`ECDSA_${i + 1}_PRIVATE_KEY`] ?? "",
+        process.env[`ECDSA_${i + 1}_KID`],
+      ),
   ),
 );
 
