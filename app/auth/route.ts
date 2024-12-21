@@ -15,13 +15,8 @@ const setRedirectToFromBody = async (req: NextRequest) => {
 const getRedirectToFrom = getParam("redirectTo");
 const setRedirectTo = (redirectTo?: string | undefined | null): unknown =>
   redirectTo && cookies().then((c) => c.set("redirectTo", redirectTo));
-const getHandleFromSearchParam = (req: NextRequest) =>
-  req.nextUrl.searchParams.get("handle");
-const getHandleFromBody = (req: NextRequest) =>
-  req.json().then(({ handle }) => handle);
 
-const getAuthURL = (handle: string) =>
-  client.authorize(handle, { ui_locales: "en" });
+const getAuthURL = (handle: string) => client.authorize(handle);
 
 const redirectToAuthorize = async (handle?: string | null) =>
   handle
@@ -32,10 +27,10 @@ const redirectToAuthorize = async (handle?: string | null) =>
 
 export const GET = async (req: NextRequest) =>
   setRedirectToFromSearchParam(req)
-    .then(getHandleFromSearchParam)
+    .then(getParam("handle")("search"))
     .then(redirectToAuthorize);
 
 export const POST = async (req: NextRequest) =>
   setRedirectToFromBody(req)
-    .then(getHandleFromBody)
+    .then(getParam("handle")("body"))
     .then(redirectToAuthorize);
