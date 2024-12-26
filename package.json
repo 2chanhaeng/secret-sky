@@ -14,10 +14,15 @@
     "@atproto/jwk-jose": "^0.1.2",
     "@atproto/oauth-client-node": "^0.2.4",
     "@prisma/client": "6.0.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "jose": "^5.9.6",
+    "lucide-react": "^0.469.0",
     "next": "15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.19.2"
   },
   "devDependencies": {
