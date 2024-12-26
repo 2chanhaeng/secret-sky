@@ -13,7 +13,7 @@
     "@atproto/api": "^0.13.21",
     "@atproto/jwk-jose": "^0.1.2",
     "@atproto/oauth-client-node": "^0.2.4",
-    "@prisma/client": "6.0.1",
+    "@prisma/client": "^6.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jose": "^5.9.6",
@@ -33,7 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.0",
     "postcss": "^8",
-    "prisma": "^6.0.1",
+    "prisma": "^6.1.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },
