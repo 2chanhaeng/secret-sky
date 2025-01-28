@@ -2,14 +2,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Profile } from "@/types/bsky";
 import Link from "next/link";
 
-interface AuthorInfoProps extends Profile {}
+// interface AuthorInfoProps extends Profile {}
 
 export default function AuthorInfo({
   did,
   handle,
   avatar,
   displayName,
-}: AuthorInfoProps) {
+}: Profile) {
   const name = displayName ?? `@${handle}`;
   const src = avatar ?? "";
   return (
