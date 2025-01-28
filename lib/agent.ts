@@ -9,7 +9,7 @@ export const getAgent: //
   redirectTo = "/"
 ) => {
   const did = (await cookies()).get("did")?.value;
-  if (!did) redirect("/auth/login");
+  if (!did) redirect(`/auth/login?redirectTo=${redirectTo}`);
   const session = await client
     .restore(did)
     .catch(() => redirect(`/auth/login?redirectTo=${redirectTo}`));
