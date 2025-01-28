@@ -2,8 +2,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Profile } from "@/types/bsky";
 import Link from "next/link";
 
-interface AuthorAvatarProps extends Profile {
+export interface AuthorAvatarProps extends Profile {
   className?: string;
+  size?: number;
 }
 
 export default function AuthorAvatar({
@@ -12,12 +13,13 @@ export default function AuthorAvatar({
   avatar,
   displayName,
   className,
+  size = 10,
 }: AuthorAvatarProps) {
   const name = displayName ?? `@${handle}`;
   const src = avatar ?? "";
   return (
     <Link href={`https://bsky.app/profile/${did}`} className={className}>
-      <Avatar>
+      <Avatar className={`size-${size}`}>
         <AvatarImage src={src} alt={name} />
         <AvatarFallback>{name}</AvatarFallback>
       </Avatar>
