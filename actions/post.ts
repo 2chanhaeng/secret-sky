@@ -15,7 +15,7 @@ export const post = async (form: FormData) => {
 
   const {
     content,
-    list: rawList,
+    list: rawList = "followings",
     parent,
     open,
   } = Object.fromEntries(form) as Record<string, string>; //
@@ -39,20 +39,18 @@ const getList = (rawList: string, did: string) => {
 };
 
 const getOrCreateKey: //
-(uri: string) => Promise<{ id: string; key: string }> = async (uri) =>
-  prisma.list.upsert({
-    where: { uri },
-    update: {},
-    create: { uri, key: await genKey() },
-    select: { id: true, key: true },
-  });
+  (uri: string) => Promise<{ id: string; key: string }> = async (uri) =>
+    prisma.list.upsert({
+      where: { uri },
+      update: {},
+      create: { uri, key: await genKey() },
+      select: { id: true, key: true },
+    });
 
 const createPost: //
-(agent: Agent) => //
-(props: { encrypted: string; id: string; open?: string; parent?: string }) => //
-Promise<string> =
-  (agent) =>
-  async ({ encrypted, id, open = "", parent }) => {
+  (agent: Agent) => //
+  (props: { encrypted: string; id: string; open?: string; parent?: string }) => //
+  Promise<string> = (agent) => async ({ encrypted, id, open = "", parent }) => {
     const text = createPostText(open);
     const rt = new RichText({ text });
     await rt.detectFacets(agent);
@@ -75,10 +73,9 @@ const addOriginFacet: (post: string, id: string, encrypted: string) => Facet = (
   //
   post,
   id,
-  encrypted
+  encrypted,
 ) => {
-  const uri = `${
-    "https://secret-sky.vercel.app" // URL_BASE
+  const uri = `${"https://secret-sky.vercel.app" // URL_BASE
   }/posts/${id}?value=${encrypted}`;
   const byteStart = getByteLength(post.slice(0, -TEXT_TO_LINK.length));
   const byteEnd = getByteLength(post);
@@ -88,8 +85,7 @@ const addOriginFacet: (post: string, id: string, encrypted: string) => Facet = (
   };
 };
 const getReply =
-  (agent: Agent) =>
-  async (uri?: string): Promise<ReplyRef | undefined> => {
+  (agent: Agent) => async (uri?: string): Promise<ReplyRef | undefined> => {
     if (!uri) return undefined;
     const [repo, , rkey] = parseAtUri(uri);
     const {
