@@ -75,8 +75,7 @@ const addOriginFacet: (post: string, id: string, encrypted: string) => Facet = (
   id,
   encrypted,
 ) => {
-  const uri = `${"https://secret-sky.vercel.app" // URL_BASE
-  }/posts/${id}?value=${encrypted}`;
+  const uri = `${URL_BASE}/posts/${id}?value=${encrypted}`;
   const byteStart = getByteLength(post.slice(0, -TEXT_TO_LINK.length));
   const byteEnd = getByteLength(post);
   return {
