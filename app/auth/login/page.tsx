@@ -6,9 +6,9 @@ import Form from "next/form";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ redirect?: string }>;
+  searchParams: Promise<{ redirectTo?: string }>;
 }) {
-  const { redirect } = await searchParams;
+  const { redirectTo } = await searchParams;
 
   return (
     <main>
@@ -23,7 +23,7 @@ export default async function LoginPage({
               placeholder="Handle"
               className="text-2xl"
             />
-            <input type="hidden" name="redirectTo" value={redirect ?? "/"} />
+            <input type="hidden" name="redirectTo" value={redirectTo ?? "/"} />
             <Button
               type="submit"
               className="bg-foreground text-background font-bold"
