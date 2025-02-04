@@ -1,4 +1,5 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
+import { redirectIfHandleIsDid } from "./utils";
 
 export default async function ProfilePage({
   params,
@@ -6,16 +7,7 @@ export default async function ProfilePage({
   params: Promise<{ handle: string }>;
 }) {
   const { handle } = await params;
-  console.log({ handle });
-  if (handle.startsWith("did:") || handle.startsWith("did%3A")) {
-    const getProfile =
-      "https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile";
-    const withQuery = `${getProfile}?actor=${handle}`;
-    const realHandle = await fetch(withQuery)
-      .then((res) => res.json())
-      .then((data) => data.handle)
-      .catch(notFound);
-    redirect(`/profile/${realHandle}`);
-  }
+  await redirectIfHandleIsDid(handle);
+
   redirect(`https://bsky.app/profile/${handle}`);
 }
