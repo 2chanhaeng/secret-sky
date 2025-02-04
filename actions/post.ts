@@ -14,7 +14,7 @@ import {
   MentionRule,
   ThreadgateType,
 } from "@/types/threadgate";
-import { Facet, PostRecord } from "@/types/bsky";
+import { CreateRecord, Facet, PostRecord } from "@/types/bsky";
 import { Agent, RichText } from "@atproto/api";
 import { ReplyRef } from "@atproto/api/dist/client/types/app/bsky/feed/post";
 import { redirect } from "next/navigation";
@@ -23,6 +23,7 @@ import { generateTID } from "@/lib/tid";
 const APPLY_WRITE_TYPE = "com.atproto.repo.applyWrites#create";
 const POST_TYPE = "app.bsky.feed.post";
 const THREADGATE_TYPE = "app.bsky.feed.threadgate";
+const POSTGATE_TYPE = "app.bsky.feed.postgate";
 
 export const post = async (form: FormData) => {
   const agent = await getAgent(client);
@@ -33,40 +34,51 @@ export const post = async (form: FormData) => {
   const uri = `at://${repo}/${POST_TYPE}/${rkey}`;
   const {
     content,
-    parent,
-    open,
+    parent = undefined,
+    open = "",
   } = Object.fromEntries(form) as Record<string, string>; //
   const key = await genKey();
   const { encrypted, iv } = await encrypt(content, key);
-  const post = await createPostRecord(agent)({
-    encrypted,
-    repo,
-    open,
-    parent,
-    createdAt,
-    rkey,
-  });
+  const post = await createPostRecord(agent)(
+    { encrypted, repo, open, parent, createdAt, rkey },
+  );
   const postWrites = {
     $type: APPLY_WRITE_TYPE,
     collection: POST_TYPE,
     rkey,
     value: post,
   };
-  const allow = getThreadgate(form);
-  const threadgateWrites = {
-    $type: APPLY_WRITE_TYPE,
-    collection: THREADGATE_TYPE,
-    rkey,
-    value: {
-      $type: THREADGATE_TYPE,
-      post: uri,
-      createdAt: createdAt.toISOString(),
-      allow,
-    },
-  };
+  const writes: CreateRecord[] = [postWrites];
+  if (!parent) {
+    const allow = getThreadgate(form);
+    const threadgateWrites = {
+      $type: APPLY_WRITE_TYPE,
+      collection: THREADGATE_TYPE,
+      rkey,
+      value: {
+        $type: THREADGATE_TYPE,
+        post: uri,
+        createdAt: createdAt.toISOString(),
+        allow,
+      },
+    };
+    writes.push(threadgateWrites);
+    const postgateWrites = {
+      $type: APPLY_WRITE_TYPE,
+      collection: POSTGATE_TYPE,
+      rkey,
+      value: {
+        $type: POSTGATE_TYPE,
+        post: uri,
+        createdAt: createdAt.toISOString(),
+        embeddingRules: [{ "$type": "app.bsky.feed.postgate#disableRule" }],
+      },
+    };
+    writes.push(postgateWrites);
+  }
   await agent.com.atproto.repo.applyWrites({
     repo,
-    writes: [postWrites, threadgateWrites],
+    writes,
     validate: true,
   });
 
@@ -79,10 +91,7 @@ const getThreadgate: (form: FormData) => ThreadgateType[] = (form) =>
   (form.getAll("allow") as string[])
     .map((rule) =>
       rule.startsWith("at://")
-        ? ({
-          $type: LIST_RULE,
-          list: rule,
-        } as ListRule)
+        ? ({ $type: LIST_RULE, list: rule } as ListRule)
         : ({
           $type: rule as typeof MENTION_RULE | typeof FOLLOWING_RULE,
         } as MentionRule | FollowingRule)
