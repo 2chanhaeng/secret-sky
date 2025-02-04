@@ -11,7 +11,10 @@ export const GET = async (req: NextRequest) => {
     session: { sub },
   } = await client
     .callback(params)
-    .catch(() => ({ session: { sub: "error" } }));
+    .catch((e) => {
+      console.error(e);
+      return ({ session: { sub: "error" } });
+    });
   if (sub === "error") return redirect("/auth/login");
   cookie.set("did", sub);
   const redirectTo = cookie.get("redirectTo")?.value ?? "/";
