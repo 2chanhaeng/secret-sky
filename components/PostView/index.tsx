@@ -10,7 +10,6 @@ export function MainPostView({
   uri,
   author,
   record,
-  likeCount,
   replyCount,
   viewer,
 }: PostViewType) {
@@ -31,6 +30,7 @@ export function MainPostView({
       <p className="text-foreground/60 text-xs pb-1">{date}</p>
       <section>
         <Mention count={replyCount ?? 0} uri={uri} />
+      </section>
     </article>
   );
 }
@@ -39,7 +39,6 @@ export function SubPostView({
   uri,
   author,
   record,
-  likeCount,
   replyCount,
   viewer,
   kind = "sub",
@@ -62,6 +61,7 @@ export function SubPostView({
         </section>
         <section className="ml-12 text-foreground/60 text-xs">
           <Mention count={replyCount ?? 0} uri={uri} />
+        </section>
       </article>
     </Link>
   );
