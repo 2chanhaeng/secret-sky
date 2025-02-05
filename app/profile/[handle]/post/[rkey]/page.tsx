@@ -1,16 +1,14 @@
 import { notFound } from "next/navigation";
 import { redirectIfHandleIsDid } from "../../utils";
-import { GetPostThreadResponse } from "@/types/bsky";
 import {
   /* isBlockedPost, isNotFoundPost  */
   isThreadViewPost,
 } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { getAgent } from "@/lib/agent";
 import client from "@/lib/client";
-import AuthorInfo from "@/components/AuthorInfo";
+import { MainPostView, SubPostView } from "@/components/PostView";
+import { PostViewType } from "@/types/bsky";
 
-const GET_POST_THREAD =
-  "https://public.api.bsky.app/xrpc/app.bsky.feed.getPostThread";
 const POST_TYPE = "app.bsky.feed.post";
 
 export default async function PostPage({
@@ -27,19 +25,22 @@ export default async function PostPage({
   } = await agent.getPostThread({ uri });
   // if (isNotFoundPost(thread)) notFound();
   // if (isBlockedPost(thread)) // TODO: handle blocked post
-  console.log({
-    isThreadViewPost: isThreadViewPost(thread),
-    thread,
-  });
   if (!isThreadViewPost(thread)) notFound();
-  const {
-    post: { author, viewer },
-  } = thread;
-  console.log({ author, viewer });
+  const { post, parent, replies } = thread;
 
   return (
     <main>
-      <AuthorInfo {...author} />
+      {parent && <SubPostView {...(parent.post as PostViewType)} />}
+      <MainPostView {...post} />
+      {replies
+        ?.filter((reply) => (reply?.post as PostViewType)?.uri)
+        .map((reply) => (
+          <SubPostView
+            key={(reply.post as PostViewType)!.uri}
+            kind="reply"
+            {...(reply.post as PostViewType)}
+          />
+        ))}
     </main>
   );
 }
