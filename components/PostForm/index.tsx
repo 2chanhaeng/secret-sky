@@ -2,20 +2,21 @@ import Form from "next/form";
 import { post } from "@/actions/post";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import AuthorAvatar, { AuthorAvatarProps } from "@/components/AuthorAvatar";
+import AuthorAvatar from "@/components/AuthorAvatar";
+import { FOLLOWING_RULE } from "@/types/threadgate";
+import { cookies } from "next/headers";
+import { BaseProfile } from "@/types/profile";
 
 export default function PostForm({
-  author,
   parent,
   className,
 }: {
-  author: AuthorAvatarProps;
-  parent?: { uri: string; list: string };
+  parent?: string;
   className?: string;
 }) {
   return (
     <section className={`flex gap-2 ${className}`}>
-      <AuthorAvatar {...author} className="size-12" />
+      <Author />
       <Form action={post} className="flex flex-col ml-2 gap-2 w-full">
         <Textarea
           name="open"
@@ -25,7 +26,8 @@ export default function PostForm({
           name="content"
           placeholder="비공개적으로 작성할 내용을 적어주세요."
         />
-        {parent && <input type="hidden" name="parent" value={parent.uri} />}
+        {!parent && <input type="hidden" name="allow" value={FOLLOWING_RULE} />}
+        {parent && <input type="hidden" name="parent" value={parent} />}
         <Button
           type="submit"
           className="bg-foreground text-background font-bold"
@@ -35,4 +37,10 @@ export default function PostForm({
       </Form>
     </section>
   );
+}
+
+async function Author() {
+  const cookie = await cookies();
+  const profile: BaseProfile = JSON.parse(cookie.get("profile")?.value ?? "{}");
+  return <AuthorAvatar {...profile} className="size-12" />;
 }

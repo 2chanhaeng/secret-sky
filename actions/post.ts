@@ -19,11 +19,13 @@ import { Agent, RichText } from "@atproto/api";
 import { ReplyRef } from "@atproto/api/dist/client/types/app/bsky/feed/post";
 import { redirect } from "next/navigation";
 import { generateTID } from "@/lib/tid";
-
-const APPLY_WRITE_TYPE = "com.atproto.repo.applyWrites#create";
-const POST_TYPE = "app.bsky.feed.post";
-const THREADGATE_TYPE = "app.bsky.feed.threadgate";
-const POSTGATE_TYPE = "app.bsky.feed.postgate";
+import {
+  APPLY_WRITE_TYPE,
+  ENCRYPTED_FACET_TYPE,
+  POST_TYPE,
+  POSTGATE_TYPE,
+  THREADGATE_TYPE,
+} from "@/lib/const";
 
 export const post = async (form: FormData) => {
   const agent = await getAgent(client);
@@ -150,7 +152,7 @@ const createEncryptFacet: (props: { encrypted: string }) => Facet = ({
   encrypted,
 }) => ({
   index: { byteStart: 0, byteEnd: 0 },
-  features: [{ $type: "app.bsky.richtext.facet#encrypt", encrypted }],
+  features: [{ $type: ENCRYPTED_FACET_TYPE, encrypted }],
 });
 
 const getReply =

@@ -10,13 +10,10 @@ export default function AuthorInfo({
   avatar,
   displayName,
 }: Profile) {
-  const name = displayName ?? `@${handle}`;
+  const name = displayName || handle;
   const src = avatar ?? "";
   return (
-    <Link
-      href={`https://bsky.app/profile/${did}`}
-      className="font-semibold hover:underline"
-    >
+    <Link href={`/profile/${did}`} className="font-semibold">
       <div className="flex items-center space-x-2">
         <Avatar>
           <AvatarImage src={src} alt={name} />
