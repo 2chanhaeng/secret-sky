@@ -1,0 +1,68 @@
+import { isPostRecord } from "@/lib/pred";
+import AuthorInfo from "../AuthorInfo";
+import DecryptView from "./DecryptView";
+import Mention from "./Mention";
+import { PostViewType } from "@/types/bsky";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+export function MainPostView({
+  uri,
+  author,
+  record,
+  likeCount,
+  replyCount,
+  viewer,
+}: PostViewType) {
+  if (!isPostRecord(record)) return null;
+  const { text: raw, facets = [], createdAt } = record;
+  const date = new Intl.DateTimeFormat("ko-KR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(createdAt));
+  const text = raw.replace(/\n\n비밀글 보기$/, "");
+  return (
+    <article>
+      <AuthorInfo {...author} />
+      <section>
+        <p className="text-lg">{text}</p>
+        <DecryptView facets={facets} viewer={viewer} uri={uri} />
+      </section>
+      <p className="text-foreground/60 text-xs pb-1">{date}</p>
+      <section>
+        <Mention count={replyCount ?? 0} uri={uri} />
+    </article>
+  );
+}
+
+export function SubPostView({
+  uri,
+  author,
+  record,
+  likeCount,
+  replyCount,
+  viewer,
+  kind = "sub",
+}: PostViewType & { kind?: string }) {
+  if (!isPostRecord(record)) return null;
+  const { text: raw, facets = [] } = record;
+  const text = raw.replace(/\n\n비밀글 보기$/, "");
+  return (
+    <Link href={`/profile/${author.handle}/post/${uri.split("/").pop()}`}>
+      <article
+        className={cn("border-foreground/20 py-2 my-2", {
+          "border-t": kind === "reply",
+          "border-b": kind !== "reply",
+        })}
+      >
+        <AuthorInfo {...author} />
+        <section className="ml-12">
+          <p className="text-base">{text}</p>
+          <DecryptView facets={facets} viewer={viewer} uri={uri} sub />
+        </section>
+        <section className="ml-12 text-foreground/60 text-xs">
+          <Mention count={replyCount ?? 0} uri={uri} />
+      </article>
+    </Link>
+  );
+}
