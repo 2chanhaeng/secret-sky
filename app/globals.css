@@ -64,13 +64,14 @@ body {
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border break-all whitespace-pre-wrap;
+    overflow-wrap: break-word;
   }
   body {
     @apply bg-background text-foreground w-full h-svh flex flex-col items-center justify-center;
   }
 
   main {
-    @apply w-[384px];
+    @apply w-[384px] px-2;
   }
 }
