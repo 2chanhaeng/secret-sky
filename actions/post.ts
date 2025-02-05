@@ -86,7 +86,7 @@ export const post = async (form: FormData) => {
 
   await prisma.post.create({ data: { key, iv, uri } });
   const url = uriToUrl(uri);
-  const href = url.replace("bsky.app", URL_BASE);
+  const href = url.replace("https://bsky.app", URL_BASE);
   redirect(href);
 };
 
