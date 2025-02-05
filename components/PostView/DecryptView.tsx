@@ -27,7 +27,7 @@ export default async function DecryptView({
   const { key, iv } = await prisma.post.findUniqueOrThrow({ where: { uri } });
   const decrypted = await decrypt(encrypted, key, iv);
   return (
-    <p
+    <div
       className={cn(
         "relative m-2 mt-4 pt-4 py-2 px-4 border-2 border-foreground/20 bg-foreground/10 rounded-xl",
         {
@@ -47,7 +47,7 @@ export default async function DecryptView({
       >
         <Lock className="inline w-4 h-4 mr-1" /> 비밀글
       </span>
-      {decrypted}
-    </p>
+      <p className="mt-2">{decrypted}</p>
+    </div>
   );
 }
