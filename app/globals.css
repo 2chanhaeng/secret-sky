@@ -74,4 +74,8 @@ body {
   main {
     @apply w-[384px] px-2;
   }
+
+  textarea {
+    all: unset;
+  }
 }

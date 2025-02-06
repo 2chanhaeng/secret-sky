@@ -2,7 +2,7 @@ import Script from "next/script";
 
 export default function DarkMode() {
   return (
-    <Script lang="ts" id="dark-mode">
+    <Script id="dark-mode">
       {`
     const darkListener = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -15,7 +15,6 @@ export default function DarkMode() {
 
     darkListener.addEventListener("change", (event) => {
       if ("theme" in localStorage) return;
-      console.log(event);
       if (event.matches) document.documentElement.classList.add("dark");
       else document.documentElement.classList.remove("dark");
     });
