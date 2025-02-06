@@ -2,59 +2,49 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
+import { FieldError, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { getProfile } from "@/lib/api";
 import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   handle: z
     .string()
     .regex(
       /^(?=.{1,253}$)(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/,
-      "핸들은 도메인 형식이어야 합니다. '.bsky.social' 까지 작성해주세요."
+      "핸들은 도메인 형식이어야 합니다."
     ),
-  redirectTo: z.string(),
+  redirectTo: z.string().optional(),
 });
 type FormSchema = z.infer<typeof formSchema>;
 
 export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: { redirectTo },
+    defaultValues: { redirectTo, handle: "" },
     reValidateMode: "onSubmit",
   });
+  const [handle, setHandle] = useState<string>("");
+  useEffect(() => {
+    form.setValue("handle", handle);
+  }, [handle, form]);
+  const setError = (message: string) => form.setError("handle", { message });
+  const onSubmit = onSubmitWhenError(setError);
+  const submit = form.handleSubmit(onSubmit);
+  form.setValue("redirectTo", redirectTo);
 
-  const onSubmit = async ({ handle: raw, redirectTo }: FormSchema) => {
-    const handle = raw.toLowerCase().replace(/[@\s]/g, "");
-    const res = await getProfile(handle);
-    console.log(res);
-    if ("error" in res) {
-      form.setError("handle", {
-        message: "핸들에 문제가 있습니다. 다시 확인해주세요.",
-      });
-      return;
-    }
-    redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
-  };
   const onKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      form.handleSubmit(onSubmit)();
+      submit();
     }
   };
-  const errors =
-    typeof form.formState.errors.handle === "string"
-      ? form.formState.errors.handle
-      : form.formState.errors.handle?.message;
-  const handle = form.watch("handle", "");
+  const errors = getError(form.formState.errors.handle);
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="flex flex-col gap-2"
-    >
+    <form onSubmit={submit} className="flex flex-col gap-2">
       <Input
         type="text"
         {...form.register("handle")}
@@ -62,7 +52,10 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
         placeholder="Handle"
         className="text-2xl"
         onKeyDown={onKeyDown}
-        onChange={() => form.clearErrors("handle")}
+        onChange={(e) => {
+          form.clearErrors("handle");
+          setHandle(e.target.value);
+        }}
       />
       {handle.length > 2 && handle.indexOf(".") === -1 && (
         <Button
@@ -86,3 +79,15 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
     </form>
   );
 }
+
+const onSubmitWhenError =
+  (setError: (message: string) => void) =>
+  async ({ handle: raw, redirectTo }: FormSchema) => {
+    const handle = raw.toLowerCase().replace(/[@\s]/g, "");
+    const res = await getProfile(handle);
+    if ("error" in res)
+      return setError("핸들에 문제가 있습니다. 다시 확인해주세요.");
+    redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
+  };
+const getError = (error: undefined | FieldError) =>
+  error ? (typeof error === "string" ? error : error?.message) : undefined;
