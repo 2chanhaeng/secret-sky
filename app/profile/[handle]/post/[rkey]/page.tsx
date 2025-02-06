@@ -8,10 +8,8 @@ import { getAgent } from "@/lib/agent";
 import client from "@/lib/client";
 import { MainPostView, SubPostView } from "@/components/PostView";
 import { PostViewType } from "@/types/bsky";
-import { SquarePen } from "lucide-react";
-import Link from "next/link";
-
-const POST_TYPE = "app.bsky.feed.post";
+import { POST_TYPE } from "@/lib/const";
+import NewPost from "@/components/NewPost";
 
 export default async function PostPage({
   params,
@@ -43,13 +41,7 @@ export default async function PostPage({
             {...(reply.post as PostViewType)}
           />
         ))}
-
-      <Link
-        href="/"
-        className="fixed bottom-4 right-4 p-4 bg-blue-500 text-white rounded-full"
-      >
-        <SquarePen />
-      </Link>
+      <NewPost />
     </main>
   );
 }
