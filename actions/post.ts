@@ -31,7 +31,10 @@ import {
 } from "@/lib/record";
 import { getReply } from "@/lib/reply";
 
-export const post = async (form: FormData) => {
+export const post = async (
+  _: undefined | Record<string, string>,
+  form: FormData,
+) => {
   const agent = await getAgent(client);
   const now = new Date();
   const createdAt = now.toISOString();
@@ -45,23 +48,47 @@ export const post = async (form: FormData) => {
     open = "",
   } = Object.fromEntries(form) as Record<string, string>; //
   const postProps = { content, open, parent, createdAt, uri };
-  const postRecord = await createEncryptedPostRecord(agent)(postProps);
-  const writes: CreateRecord[] = [postRecord];
-
-  if (!parent) {
-    const allow = getThreadgate(form);
-    writes.push(createThreadgateRecord(uri, createdAt, allow));
+  const valid = validInput(postProps);
+  if (valid) {
+    return {
+      message: valid,
+      open,
+      content,
+    };
   }
-  writes.push(createDisablePostgateRecord(uri, createdAt));
-  if (writes.map(validateCreate).every(({ success }) => success)) {
-    await agent.com.atproto.repo.applyWrites({
-      repo,
-      writes,
-      validate: true,
-    });
+  try {
+    const postRecord = await createEncryptedPostRecord(agent)(postProps);
+    const writes: CreateRecord[] = [postRecord];
 
-    const href = uriToPath(uri);
-    redirect(href);
+    if (!parent) {
+      const allow = getThreadgate(form);
+      writes.push(createThreadgateRecord(uri, createdAt, allow));
+    }
+    writes.push(createDisablePostgateRecord(uri, createdAt));
+    if (writes.map(validateCreate).every(({ success }) => success)) {
+      await agent.com.atproto.repo.applyWrites({
+        repo,
+        writes,
+        validate: true,
+      });
+
+      const href = uriToPath(uri);
+      redirect(href);
+    } else {
+      return {
+        message: "작성 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
+        open,
+        content,
+      };
+    }
+  } catch (e) {
+    console.error(e);
+    return {
+      message:
+        "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요. 문제가 지속될 경우 개발자에게 문의해주세요.",
+      open,
+      content,
+    };
   }
 };
 
@@ -82,6 +109,21 @@ interface EncryptPostProps {
   parent?: string;
   uri: string;
 }
+
+const validInput = ({ content, open, parent }: EncryptPostProps) => {
+  if (!content && !open) {
+    return "내용이 없습니다.";
+  }
+  if (content && content.length > 1000) {
+    return "비밀글은 1000자 이하로 작성해주세요.";
+  }
+  if (open && open.length > 250) {
+    return "공개글은 250자 이하로 작성해주세요.";
+  }
+  if (parent && !parent.startsWith("at://")) {
+    return "부모 글이 올바르지 않습니다.";
+  }
+};
 
 const createEncryptedPostRecord: //
   (agent: Agent) => (props: EncryptPostProps) => Promise<CreateRecord> =

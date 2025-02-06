@@ -5,7 +5,6 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -102,7 +101,7 @@ body {
   }
 
   textarea {
-    @apply bg-transparent;
     all: unset;
+    @apply bg-transparent focus-visible:outline-none;
   }
 }
