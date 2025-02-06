@@ -97,7 +97,7 @@ body {
   }
 
   main {
-    @apply w-[384px] px-2;
+    @apply w-[384px] px-2 overflow-y-auto;
   }
 
   textarea {
