@@ -5,6 +5,8 @@ import Mention from "./Mention";
 import { PostViewType } from "@/types/bsky";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { uriToPath } from "@/lib/uri";
+import { ExternalLink } from "lucide-react";
 
 export function MainPostView({
   uri,
@@ -27,7 +29,10 @@ export function MainPostView({
         <p className="text-lg">{text}</p>
         <DecryptView facets={facets} viewer={viewer} uri={uri} />
       </section>
-      <p className="text-foreground/60 text-xs pb-1">{date}</p>
+      <p className="text-foreground/60 text-xs pb-1 flex gap-2">
+        {date}
+        <LinkToBskyApp uri={uri} />
+      </p>
       <section>
         <Mention count={replyCount ?? 0} uri={uri} />
       </section>
@@ -59,10 +64,23 @@ export function SubPostView({
           <p className="text-base">{text}</p>
           <DecryptView facets={facets} viewer={viewer} uri={uri} sub />
         </section>
+        <LinkToBskyApp uri={uri} />
         <section className="ml-12 text-foreground/60 text-xs">
           <Mention count={replyCount ?? 0} uri={uri} />
         </section>
       </article>
+    </Link>
+  );
+}
+
+function LinkToBskyApp({ uri }: { uri: string }) {
+  const path = uriToPath(uri);
+  return (
+    <Link
+      href={`https://bsky.app${path}`}
+      className="text-foreground/60 text-xs pb-1 hover:underline"
+    >
+      블루스카이에서 보기 <ExternalLink className="inline" size={12} />
     </Link>
   );
 }
