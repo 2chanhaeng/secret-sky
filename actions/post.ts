@@ -71,9 +71,6 @@ export const post = async (
         writes,
         validate: true,
       });
-
-      const href = uriToPath(uri);
-      redirect(href);
     } else {
       return {
         message: "작성 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
@@ -90,6 +87,9 @@ export const post = async (
       content,
     };
   }
+
+  const href = uriToPath(uri);
+  redirect(href);
 };
 
 const getThreadgate: (form: FormData) => ThreadgateType[] = (form) =>
