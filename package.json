@@ -13,11 +13,13 @@
     "@atproto/api": "^0.13.21",
     "@atproto/jwk-jose": "^0.1.2",
     "@atproto/oauth-client-node": "^0.2.4",
+    "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "^6.1.0",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.4",
+    "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-select": "^2.1.4",
-    "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-slot": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jose": "^5.9.6",
@@ -25,9 +27,11 @@
     "next": "15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.54.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
