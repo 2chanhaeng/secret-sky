@@ -1,11 +1,11 @@
 import Form from "next/form";
 import { post } from "@/actions/post";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import AuthorAvatar from "@/components/AuthorAvatar";
 import { FOLLOWING_RULE } from "@/types/threadgate";
 import { cookies } from "next/headers";
 import { BaseProfile } from "@/types/profile";
+import { Lock } from "lucide-react";
 
 export default function PostForm({
   parent,
@@ -18,14 +18,20 @@ export default function PostForm({
     <section className={`flex gap-2 ${className}`}>
       <Author />
       <Form action={post} className="flex flex-col ml-2 gap-2 w-full">
-        <Textarea
-          name="open"
-          placeholder="공개적으로 적을 내용을 적어주세요."
-        />
-        <Textarea
-          name="content"
-          placeholder="비공개적으로 작성할 내용을 적어주세요."
-        />
+        <section className="flex flex-col gap-2 rounded-lg p-2 border border-foreground/20">
+          <textarea name="open" placeholder="무슨 일이 일어나고 있나요?" />
+
+          <div className="relative m-2 mt-4 pt-4 py-2 px-4 border-2 border-foreground/20 bg-foreground/10 rounded-xl">
+            <span className="absolute left-2 -top-4 py-1 pl-2 pr-3 text-foreground/60 rounded-full bg-gray-300 dark:bg-gray-700">
+              <Lock className="inline w-4 h-4 mr-1" /> 비밀글
+            </span>
+            <textarea
+              name="content"
+              className="mt-2 w-full"
+              placeholder="비밀글"
+            />
+          </div>
+        </section>
         {!parent && <input type="hidden" name="allow" value={FOLLOWING_RULE} />}
         {parent && <input type="hidden" name="parent" value={parent} />}
         <Button
