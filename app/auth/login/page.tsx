@@ -6,9 +6,10 @@ import Form from "next/form";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ redirectTo?: string }>;
+  searchParams: Promise<{ redirectTo?: string; error?: string }>;
 }) {
-  const { redirectTo } = await searchParams;
+  const { redirectTo, error } = await searchParams;
+  console.log({ error });
 
   return (
     <main>
@@ -23,6 +24,11 @@ export default async function LoginPage({
               placeholder="Handle"
               className="text-2xl"
             />
+            {error && (
+              <p className="text-red-500 text-center">
+                핸들을 찾을 수 없습니다. 다시 시도해주세요.
+              </p>
+            )}
             <input type="hidden" name="redirectTo" value={redirectTo ?? "/"} />
             <Button
               type="submit"

@@ -1,3 +1,4 @@
+import { getProfile } from "@/lib/api";
 import client from "@/lib/client";
 import { getParam } from "@/lib/utils";
 import { cookies } from "next/headers";
@@ -16,11 +17,19 @@ const getRedirectToFrom = getParam("redirectTo");
 const setRedirectTo = (redirectTo?: string | undefined | null): unknown =>
   redirectTo && cookies().then((c) => c.set("redirectTo", redirectTo));
 
+const validateHandle = (handle: string) =>
+  getProfile(handle).then((data) => {
+    if ("error" in data || data.handle !== handle) {
+      redirect("/auth/login?error=true");
+    }
+    return data.handle;
+  });
 const getAuthURL = (handle: string) => client.authorize(handle);
 
 const redirectToAuthorize = async (handle?: string | null) =>
   handle
-    ? getAuthURL(handle)
+    ? validateHandle(handle)
+      .then(getAuthURL)
       .then(({ href }) => href)
       .then(redirect)
     : redirect("/auth/login");
