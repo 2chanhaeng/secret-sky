@@ -38,3 +38,34 @@ export function generateTID(date: Date): string {
 
   return digits.join("");
 }
+
+/**
+ * 13자리 TID 문자열을 Date 객체로 변환합니다.
+ * TID의 구성: [0비트][53비트 마이크로초][10비트 CLOCK_ID]
+ * 여기서는 CLOCK_ID 부분은 무시하고, 마이크로초 값을 이용해 Date 객체를 만듭니다.
+ *
+ * @param tid 13자리 TID 문자열
+ * @returns 변환된 Date 객체
+ */
+export function parseTID(str: string): Date {
+  const tid = str.slice(-TID_LENGTH).toLowerCase();
+  let tidValue = 0n;
+
+  // 13자리 문자열을 BigInt 값으로 디코딩 (고정된 for문 사용)
+  for (let i = 0; i < 13; i++) {
+    const char = tid[i];
+    const index = BASE32_ALPHABET.indexOf(char);
+    if (index === -1) {
+      throw new Error(`유효하지 않은 TID 문자: ${char}`);
+    }
+    tidValue = tidValue * 32n + BigInt(index);
+  }
+
+  // TID 값에서 CLOCK_ID(마지막 10비트)를 제거하여 마이크로초 값을 추출합니다.
+  const microseconds = tidValue >> 10n;
+
+  // 마이크로초를 밀리초로 변환 (Date 객체는 밀리초 단위)
+  const milliseconds = microseconds / 1000n;
+
+  return new Date(Number(milliseconds));
+}

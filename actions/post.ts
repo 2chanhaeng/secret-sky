@@ -3,7 +3,6 @@
 import { encrypt, genKey } from "@/lib/aes";
 import { getAgent } from "@/lib/agent";
 import client from "@/lib/client";
-import { URL_BASE } from "@/lib/url";
 import prisma from "@/prisma";
 import {
   FOLLOWING_RULE,
@@ -14,80 +13,56 @@ import {
   MentionRule,
   ThreadgateType,
 } from "@/types/threadgate";
-import { CreateRecord, Facet, PostRecord } from "@/types/bsky";
-import { Agent, RichText } from "@atproto/api";
-import { ReplyRef } from "@atproto/api/dist/client/types/app/bsky/feed/post";
+import { CreateRecord, Facet } from "@/types/bsky";
+import type { Agent } from "@atproto/api";
 import { redirect } from "next/navigation";
 import { generateTID } from "@/lib/tid";
+import { APPLY_WRITE_TYPE, POST_TYPE, TEXT_TO_LINK } from "@/lib/const";
+import { validateCreate } from "@atproto/api/dist/client/types/com/atproto/repo/applyWrites";
+import { getRkey, uriToPath } from "@/lib/uri";
 import {
-  APPLY_WRITE_TYPE,
-  ENCRYPTED_FACET_TYPE,
-  POST_TYPE,
-  POSTGATE_TYPE,
-  THREADGATE_TYPE,
-} from "@/lib/const";
+  createDecryptLinkFacet,
+  createEncryptFacet,
+  detectFacets,
+} from "@/lib/facet";
+import {
+  createDisablePostgateRecord,
+  createThreadgateRecord,
+} from "@/lib/record";
+import { getReply } from "@/lib/reply";
 
 export const post = async (form: FormData) => {
   const agent = await getAgent(client);
-  const createdAt = new Date();
+  const now = new Date();
+  const createdAt = now.toISOString();
   const repo = agent.assertDid;
-  const rkey = generateTID(createdAt);
+  const rkey = generateTID(now);
 
   const uri = `at://${repo}/${POST_TYPE}/${rkey}`;
   const {
-    content,
+    content = "",
     parent = undefined,
     open = "",
   } = Object.fromEntries(form) as Record<string, string>; //
-  const key = await genKey();
-  const { encrypted, iv } = await encrypt(content, key);
-  const post = await createPostRecord(agent)(
-    { encrypted, repo, open, parent, createdAt, rkey },
-  );
-  const postWrites = {
-    $type: APPLY_WRITE_TYPE,
-    collection: POST_TYPE,
-    rkey,
-    value: post,
-  };
-  const writes: CreateRecord[] = [postWrites];
+  const postProps = { content, open, parent, createdAt, uri };
+  const postRecord = await createEncryptedPostRecord(agent)(postProps);
+  const writes: CreateRecord[] = [postRecord];
+
   if (!parent) {
     const allow = getThreadgate(form);
-    const threadgateWrites = {
-      $type: APPLY_WRITE_TYPE,
-      collection: THREADGATE_TYPE,
-      rkey,
-      value: {
-        $type: THREADGATE_TYPE,
-        post: uri,
-        createdAt: createdAt.toISOString(),
-        allow,
-      },
-    };
-    writes.push(threadgateWrites);
-    const postgateWrites = {
-      $type: APPLY_WRITE_TYPE,
-      collection: POSTGATE_TYPE,
-      rkey,
-      value: {
-        $type: POSTGATE_TYPE,
-        post: uri,
-        createdAt: createdAt.toISOString(),
-        embeddingRules: [{ "$type": "app.bsky.feed.postgate#disableRule" }],
-      },
-    };
-    writes.push(postgateWrites);
+    writes.push(createThreadgateRecord(uri, createdAt, allow));
   }
-  await agent.com.atproto.repo.applyWrites({
-    repo,
-    writes,
-    validate: true,
-  });
+  writes.push(createDisablePostgateRecord(uri, createdAt));
+  if (writes.map(validateCreate).every(({ success }) => success)) {
+    await agent.com.atproto.repo.applyWrites({
+      repo,
+      writes,
+      validate: true,
+    });
 
-  await prisma.post.create({ data: { key, iv, uri } });
-  const url = uriToUrl(uri);
-  const href = url.replace("https://bsky.app", URL_BASE);
-  redirect(href);
+    const href = uriToPath(uri);
+    redirect(href);
+  }
 };
 
 const getThreadgate: (form: FormData) => ThreadgateType[] = (form) =>
@@ -100,79 +75,61 @@ const getThreadgate: (form: FormData) => ThreadgateType[] = (form) =>
         } as MentionRule | FollowingRule)
     );
 
-const createPostRecord: //
-  (agent: Agent) => //
-  (
-    props: {
-      encrypted: string;
-      repo: string;
-      rkey: string;
-      createdAt: Date;
-      open?: string;
-      parent?: string;
-    },
-  ) => //
-  Promise<PostRecord> = (agent) =>
-  async (
-    { encrypted, repo, open = "", parent, rkey, createdAt },
-  ) => {
-    const text = createPostText(open);
-    const rt = new RichText({ text });
-    await rt.detectFacets(agent);
-    if (rt.facets === undefined) rt.facets = [];
-    rt.facets.push(createLinkFacet({ text, repo, rkey }));
-    rt.facets.push(createEncryptFacet({ encrypted }));
-    const reply = await getReply(agent)(parent);
+interface EncryptPostProps {
+  content: string;
+  createdAt: string;
+  open: string;
+  parent?: string;
+  uri: string;
+}
 
-    return ({
-      $type: POST_TYPE,
-      text: rt.text,
-      facets: rt.facets,
-      createdAt: createdAt.toISOString(),
-      reply,
-    });
-  };
-const TEXT_TO_LINK = "비밀글 보기";
+const createEncryptedPostRecord: //
+  (agent: Agent) => (props: EncryptPostProps) => Promise<CreateRecord> =
+    (agent) => async ({ content, open, parent, createdAt, uri }) => {
+      const props = { uri, open, content };
+      const { text, facets: encrypted } = await getTextAndFacets(props);
+      const facets = [
+        ...await detectFacets(agent)(text),
+        ...encrypted,
+      ];
+      const reply = await getReply(agent)(parent);
+
+      return ({
+        $type: APPLY_WRITE_TYPE,
+        collection: POST_TYPE,
+        rkey: getRkey(uri),
+        value: {
+          $type: POST_TYPE,
+          text,
+          facets,
+          createdAt,
+          reply,
+        },
+      });
+    };
+
+const getTextAndFacets: (
+  props: { uri: string; open: string; content: string },
+) => Promise<{
+  text: string;
+  facets: Facet[];
+}> = async ({ uri, open, content }) => {
+  const text = content ? createPostText(open) : open;
+  const facets = content
+    ? [
+      createDecryptLinkFacet({ text, uri }),
+      await getEncryptedFacet(uri, content),
+    ]
+    : [];
+  return { text, facets };
+};
+
+const getEncryptedFacet = async (uri: string, content: string) => {
+  const key = await genKey();
+  const { encrypted, iv } = await encrypt(content, key);
+  await prisma.post.create({ data: { key, iv, uri } });
+  return createEncryptFacet({ encrypted });
+};
+
 const createPostText = (open: string) =>
   `#그늘셀프${open ? "\n\n" + open : ""}\n\n${TEXT_TO_LINK}`;
-const createLinkFacet: (
-  props: { text: string; repo: string; rkey: string },
-) => Facet = (
-  { text, repo, rkey },
-) => {
-  const uri = `${URL_BASE}/profile/${repo}/post/${rkey}`;
-  const byteStart = getByteLength(text.slice(0, -TEXT_TO_LINK.length));
-  const byteEnd = getByteLength(text);
-  return {
-    index: { byteStart, byteEnd },
-    features: [{ $type: "app.bsky.richtext.facet#link", uri }],
-  };
-};
-
-const createEncryptFacet: (props: { encrypted: string }) => Facet = ({
-  encrypted,
-}) => ({
-  index: { byteStart: 0, byteEnd: 0 },
-  features: [{ $type: ENCRYPTED_FACET_TYPE, encrypted }],
-});
-
-const getReply =
-  (agent: Agent) => async (uri?: string): Promise<ReplyRef | undefined> => {
-    if (!uri) return undefined;
-    const [repo, , rkey] = parseAtUri(uri);
-    const {
-      value: { reply },
-      cid,
-    } = await agent.getPost({ repo, rkey });
-    const parent = { uri, cid };
-    const root = reply ? reply.root : parent;
-    return { parent, root };
-  };
-
-const getByteLength = (str: string) => new TextEncoder().encode(str).length;
-
-const uriToUrl = (uri: string) => {
-  const [repo, , rkey] = parseAtUri(uri);
-  return `https://bsky.app/profile/${repo}/post/${rkey}`;
-};
-const parseAtUri = (uri: string) => uri.split("/").slice(-3);
