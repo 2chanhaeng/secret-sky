@@ -23,6 +23,7 @@ export default function InnerForm({ parent }: { parent?: string }) {
           name="open"
           placeholder="무슨 일이 일어나고 있나요?"
           defaultValue={state?.open ?? ""}
+          maxLength={250}
         />
         <div className="relative m-2 mt-4 pt-4 py-2 px-4 border-2 border-foreground/20 bg-foreground/10 rounded-xl">
           <span className="absolute left-2 -top-4 py-1 pl-2 pr-3 text-foreground/60 rounded-full bg-gray-300 dark:bg-gray-700">
@@ -33,6 +34,7 @@ export default function InnerForm({ parent }: { parent?: string }) {
             defaultValue={state?.content ?? ""}
             className="mt-2 w-full"
             placeholder="비밀글"
+            maxLength={1000}
           />
         </div>
       </section>
