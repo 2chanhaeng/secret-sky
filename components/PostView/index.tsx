@@ -64,7 +64,7 @@ export function SubPostView({
           <p className="text-base">{text}</p>
           <DecryptView facets={facets} viewer={viewer} uri={uri} sub />
         </section>
-        <LinkToBskyApp uri={uri} />
+        <LinkToBskyApp uri={uri} className="ml-12" />
         <section className="ml-12 text-foreground/60 text-xs">
           <Mention count={replyCount ?? 0} uri={uri} />
         </section>
@@ -73,12 +73,18 @@ export function SubPostView({
   );
 }
 
-function LinkToBskyApp({ uri }: { uri: string }) {
+function LinkToBskyApp({
+  uri,
+  className,
+}: {
+  uri: string;
+  className?: string;
+}) {
   const path = uriToPath(uri);
   return (
     <Link
       href={`https://bsky.app${path}`}
-      className="text-foreground/60 text-xs pb-1 hover:underline"
+      className={`text-foreground/60 text-xs pb-1 hover:underline ${className}`}
     >
       블루스카이에서 보기 <ExternalLink className="inline" size={12} />
     </Link>
