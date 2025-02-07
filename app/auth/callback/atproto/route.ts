@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { Profile } from "@/types/bsky";
 import { BaseProfile } from "@/types/profile";
+import { getProfile } from "@/lib/api";
 
 export const GET = async (req: NextRequest) => {
   const params = req.nextUrl.searchParams;
@@ -18,7 +19,7 @@ export const GET = async (req: NextRequest) => {
       return ({ session: { sub: "error" } });
     });
   if (sub === "error") return redirect("/auth/login");
-  const profile = await fetchProfile(sub);
+  const profile = await getProfile(sub);
   const stringifiedProfile = JSON.stringify(pickProfile(profile));
   cookie.set("did", profile.did, {
     httpOnly: true,
@@ -35,11 +36,6 @@ export const GET = async (req: NextRequest) => {
   cookie.delete("redirectTo");
   return redirect(redirectTo);
 };
-
-const fetchProfile = async (sub: string) =>
-  fetch(
-    "https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=" + sub,
-  ).then((res) => res.json());
 
 const pickProfile = (
   { did, handle, avatar = "", displayName }: Profile,
