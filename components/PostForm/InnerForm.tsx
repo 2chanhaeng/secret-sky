@@ -6,6 +6,7 @@ import { FOLLOWING_RULE } from "@/types/threadgate";
 import { Lock } from "lucide-react";
 import { useActionState } from "react";
 import Form from "next/form";
+import Textarea from "../Textarea";
 
 const INITIAL_STATE = {
   message: "",
@@ -18,8 +19,8 @@ export default function InnerForm({ parent }: { parent?: string }) {
 
   return (
     <Form action={formAction} className="flex flex-col ml-2 gap-2 w-full">
-      <section className="flex flex-col gap-2 rounded-lg p-2 border border-foreground/20">
-        <textarea
+      <section className="rounded-lg p-2 border border-foreground/20 max-h-[calc(80svh-10rem)] overflow-y-scroll">
+        <Textarea
           name="open"
           placeholder="무슨 일이 일어나고 있나요?"
           defaultValue={state?.open ?? ""}
@@ -29,7 +30,7 @@ export default function InnerForm({ parent }: { parent?: string }) {
           <span className="absolute left-2 -top-4 py-1 pl-2 pr-3 text-foreground/60 rounded-full bg-gray-300 dark:bg-gray-700">
             <Lock className="inline w-4 h-4 mr-1" /> 비밀글
           </span>
-          <textarea
+          <Textarea
             name="content"
             defaultValue={state?.content ?? ""}
             className="mt-2 w-full"
