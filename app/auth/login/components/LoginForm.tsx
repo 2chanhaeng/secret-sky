@@ -73,7 +73,11 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
         readOnly
         {...form.register("redirectTo")}
       />
-      <Button type="submit" className="bg-foreground text-background font-bold">
+      <Button
+        type="submit"
+        disabled={form.formState.isSubmitting}
+        className="bg-foreground text-background font-bold"
+      >
         Login
       </Button>
     </form>
