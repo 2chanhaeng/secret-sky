@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { Profile } from "@/types/bsky";
 import { BaseProfile } from "@/types/profile";
 import { getProfile } from "@/lib/api";
+import { setProfile } from "@/lib/profile";
 
 export const GET = async (req: NextRequest) => {
   const params = req.nextUrl.searchParams;
@@ -20,17 +21,12 @@ export const GET = async (req: NextRequest) => {
     });
   if (sub === "error") return redirect("/auth/login");
   const profile = await getProfile(sub);
-  const stringifiedProfile = JSON.stringify(pickProfile(profile));
   cookie.set("did", profile.did, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
   });
-  cookie.set("profile", stringifiedProfile, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-  });
+  setProfile(pickProfile(profile));
 
   const redirectTo = cookie.get("redirectTo")?.value ?? "/";
   cookie.delete("redirectTo");
