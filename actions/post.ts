@@ -17,7 +17,13 @@ import { CreateRecord, Facet } from "@/types/bsky";
 import type { Agent } from "@atproto/api";
 import { redirect } from "next/navigation";
 import { generateTID } from "@/lib/tid";
-import { APPLY_WRITE_TYPE, POST_TYPE, TEXT_TO_LINK } from "@/lib/const";
+import {
+  APPLY_WRITE_TYPE,
+  NO_AUTH_LABEL,
+  POST_TYPE,
+  SELF_LABEL,
+  TEXT_TO_LINK,
+} from "@/lib/const";
 import { validateCreate } from "@atproto/api/dist/client/types/com/atproto/repo/applyWrites";
 import { getRkey, uriToPath } from "@/lib/uri";
 import {
@@ -72,6 +78,7 @@ export const post = async (
         validate: true,
       });
     } else {
+      console.error("Validation failed", writes.map(validateCreate));
       return {
         message: "작성 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
         open,
@@ -135,6 +142,10 @@ const createEncryptedPostRecord: //
         ...encrypted,
       ];
       const reply = await getReply(agent)(parent);
+      const labels = {
+        $type: SELF_LABEL,
+        values: [{ val: NO_AUTH_LABEL }, { val: "!hide" }],
+      };
 
       return ({
         $type: APPLY_WRITE_TYPE,
@@ -146,6 +157,7 @@ const createEncryptedPostRecord: //
           facets,
           createdAt,
           reply,
+          labels,
         },
       });
     };

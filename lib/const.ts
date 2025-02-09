@@ -13,3 +13,5 @@ export const BSKY_GET_PROFILE_API =
   `${BSKY_PUBLIC_API}/xrpc/app.bsky.actor.getProfile`;
 export const BSKY_GET_POST_THREAD_API =
   `${BSKY_PUBLIC_API}/xrpc/app.bsky.feed.getPostThread`;
+export const SELF_LABEL = "com.atproto.label.defs#selfLabels";
+export const NO_AUTH_LABEL = "!no-unauthenticated";
