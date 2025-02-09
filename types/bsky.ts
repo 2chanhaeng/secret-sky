@@ -1,6 +1,9 @@
 export type { Facet } from "@atproto/api";
 export type { ProfileViewDetailed as Profile } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-export type { PostView as PostViewType } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+export type {
+  PostView as PostViewType,
+  ThreadViewPost,
+} from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 export type {
   Record as PostRecord,
 } from "@atproto/api/dist/client/types/app/bsky/feed/post";

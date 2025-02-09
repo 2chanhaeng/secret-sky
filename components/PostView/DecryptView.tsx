@@ -1,31 +1,29 @@
-import { decrypt } from "@/lib/aes";
-import { isEncryptedFacet } from "@/lib/pred";
-import { cn } from "@/lib/utils";
-import prisma from "@/prisma";
-import { Viewer } from "@/types/bsky";
-import { Facet } from "@atproto/api";
-import { Lock } from "lucide-react";
+"use client";
 
-export default async function DecryptView({
-  facets,
-  viewer,
+import { cn } from "@/lib/utils";
+import { Lock } from "lucide-react";
+import { useEffect, useState } from "react";
+
+export default function DecryptView({
   uri,
   sub = false,
 }: {
-  facets: Facet[];
-  viewer?: Viewer;
   uri: string;
   sub?: boolean;
 }) {
-  if (!viewer || viewer.replyDisabled) return null;
-  const encryptedValue = facets
-    .map((facet) => facet.features || [])
-    .flat()
-    .find(isEncryptedFacet);
-  if (!encryptedValue || !isEncryptedFacet(encryptedValue)) return null;
-  const { encrypted } = encryptedValue;
-  const { key, iv } = await prisma.post.findUniqueOrThrow({ where: { uri } });
-  const decrypted = await decrypt(encrypted, key, iv);
+  const [decrypted, setDecrypted] = useState<string>("");
+
+  useEffect(() => {
+    const fetchDecrypted = async () => {
+      const res = await fetch(`/api/decrypt?uri=${uri}`);
+      const decrypted = await res.json();
+      console.log(decrypted);
+      setDecrypted(decrypted);
+    };
+    fetchDecrypted();
+  });
+
+  if (!decrypted) return null;
   return (
     <div
       className={cn(

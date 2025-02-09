@@ -11,3 +11,5 @@ export const POSTGATE_DISABLE_RULE = { $type: POSTGATE_DISABLE_TYPE };
 export const BSKY_PUBLIC_API = "https://public.api.bsky.app";
 export const BSKY_GET_PROFILE_API =
   `${BSKY_PUBLIC_API}/xrpc/app.bsky.actor.getProfile`;
+export const BSKY_GET_POST_THREAD_API =
+  `${BSKY_PUBLIC_API}/xrpc/app.bsky.feed.getPostThread`;
