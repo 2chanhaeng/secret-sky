@@ -13,7 +13,7 @@ export const GET = async (req: NextRequest) => {
     const agent = await getAgent(client);
     const { data: { posts: [post] } } = await agent.getPosts({ uris: [uri] });
     const { viewer, record } = post;
-    if (!viewer || !viewer.replyDisabled) throw new Error("reply is disabled");
+    if (!viewer || viewer.replyDisabled) throw new Error("reply is disabled");
     if (!record || !isPostRecord(record)) throw new Error("invalid post");
     const { key, iv } = await prisma.post.findUniqueOrThrow({ where: { uri } });
     const facet = getEncryptedFacet(record.facets || []);
