@@ -1,11 +1,7 @@
-import {
-  NodeOAuthClient,
-  NodeSavedSession,
-  NodeSavedState,
-} from "@atproto/oauth-client-node";
+import { NodeOAuthClient } from "@atproto/oauth-client-node";
 import { JoseKey } from "@atproto/jwk-jose";
-import { EncryptedCookie } from "./secure";
 import { CALLBACK_URL, PUBLIC_URL, URL_BASE } from "./url";
+import { sessions, states } from "./cookie";
 
 const scopes = ["atproto", "transition:generic"];
 const scope = scopes.join(" ");
@@ -36,16 +32,6 @@ const keyset = await Promise.all(
   ),
 );
 
-const sessions = new EncryptedCookie<{
-  sub: string;
-  session: NodeSavedSession;
-}>("session");
-
-const states = new EncryptedCookie<{
-  key: string;
-  state: NodeSavedState;
-}>("auth_state");
-
 const client = new NodeOAuthClient({
   // This object will be used to build the payload of the /client-metadata.json
   // endpoint metadata, exposing the client metadata to the OAuth server.
@@ -53,7 +39,7 @@ const client = new NodeOAuthClient({
     // Must be a URL that will be exposing this metadata
     client_id,
     scope,
-    client_name: "My App",
+    client_name: "Secret Sky",
     client_uri: URL_BASE,
     redirect_uris: [CALLBACK_URL],
     grant_types: ["authorization_code", "refresh_token"],
@@ -76,7 +62,7 @@ const client = new NodeOAuthClient({
       states.get().then((cookie) =>
         cookie?.key === key ? cookie?.state : undefined
       ),
-    del: () => states.delete(),
+    del: () => states._delete(),
   },
 
   // Interface to store authenticated session data
@@ -86,7 +72,7 @@ const client = new NodeOAuthClient({
       sessions.get().then((cookie) =>
         cookie?.sub === sub ? cookie?.session : undefined
       ),
-    del: () => sessions.delete(),
+    del: () => sessions._delete(),
   },
 });
 

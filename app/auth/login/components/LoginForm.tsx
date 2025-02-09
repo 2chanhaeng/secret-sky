@@ -20,7 +20,11 @@ const formSchema = z.object({
 });
 type FormSchema = z.infer<typeof formSchema>;
 
-export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
+export default function LoginForm({
+  redirectTo = "/",
+}: {
+  redirectTo?: string;
+}) {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: { redirectTo, handle: "" },

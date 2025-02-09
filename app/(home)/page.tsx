@@ -1,12 +1,11 @@
-import client from "@/lib/client";
-import { getAgent } from "@/lib/agent";
-import PostForm from "@/components/PostForm";
+import NewPost from "@/components/NewPost";
+import Timeline from "./components/Timeline";
 
 export default async function Home() {
-  await getAgent(client, "/");
   return (
     <main>
-      <PostForm />
+      <Timeline />
+      <NewPost />
     </main>
   );
 }
