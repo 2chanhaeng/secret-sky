@@ -1,8 +1,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DBProvider, useAccountUpdate, useLoggedAccounts } from "@/hooks/db";
+import {
+  DBProvider,
+  useAccountUpdate,
+  useDeleteAccount,
+  useLoggedAccounts,
+} from "@/hooks/db";
 import { BaseProfile } from "@/types/profile";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, XIcon } from "lucide-react";
+import { redirect } from "next/navigation";
 import Link from "next/link";
+import { deleteProfile } from "@/hooks/use-profile";
 
 export default function NavigationProfileList(profile: BaseProfile) {
   return (
@@ -50,17 +57,29 @@ function LoggedAccounts({ current }: { current: string }) {
 
 function ChangeAccount({ avatar, displayName, handle, did }: BaseProfile) {
   return (
-    <Link
-      key={did}
-      href={`/auth?handle=${handle}`}
-      className="flex justify-start items-center gap-2 py-2 px-4"
-    >
-      <Avatar className="size-8">
-        <AvatarImage src={avatar} alt={handle} />
-        <AvatarFallback>{handle}</AvatarFallback>
-      </Avatar>
-      <span className="font-bold text-base">{displayName || handle}</span>
-      <span className="text-sm text-foreground/60">@{handle}</span>
-    </Link>
+    <div className="py-2 px-4 flex justify-between items-center">
+      <button
+        key={did}
+        onClick={() => {
+          deleteProfile();
+          redirect(`/auth?handle=${handle}`);
+        }}
+        className="flex justify-start items-center gap-2"
+      >
+        <Avatar className="size-8">
+          <AvatarImage src={avatar} alt={handle} />
+          <AvatarFallback>{handle}</AvatarFallback>
+        </Avatar>
+        <span className="font-bold text-base line-clamp-1">
+          {displayName || handle}
+        </span>
+        <span className="text-sm text-foreground/60 line-clamp-1">
+          @{handle}
+        </span>
+      </button>
+      <button onClick={useDeleteAccount(did)}>
+        <XIcon className="size-4" />
+      </button>
+    </div>
   );
 }
