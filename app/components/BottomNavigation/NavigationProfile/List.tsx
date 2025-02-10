@@ -1,15 +1,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DBProvider,
-  useAccountUpdate,
-  useDeleteAccount,
-  useLoggedAccounts,
-} from "@/hooks/db";
+import { DBProvider } from "@/context/db";
 import { BaseProfile } from "@/types/profile";
 import { ChevronRight, XIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { deleteProfile } from "@/hooks/use-profile";
+import {
+  useAccountUpdate,
+  useDeleteAccount,
+  useLoggedAccounts,
+} from "@/hooks/use-logged-account";
 
 export default function NavigationProfileList(profile: BaseProfile) {
   return (

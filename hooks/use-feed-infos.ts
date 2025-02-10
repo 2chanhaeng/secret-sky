@@ -1,56 +1,10 @@
-import { BaseProfile } from "@/types/profile";
-import {
-  IndexedDB,
-  IndexedDBProps,
-  initDB,
-  useIndexedDB,
-} from "react-indexed-db-hook";
-import { useEffect, useState } from "react";
-import { useFeeds, usePref } from "./use-pref";
-import { GeneratorRecord, ListRecord, SavedFeed } from "@/types/bsky";
+import { useIndexedDB } from "react-indexed-db-hook";
+import { useFeeds } from "./use-pref";
+import { GeneratorRecord, ListRecord } from "@/types/bsky";
 import { getRecord } from "@/lib/api";
 import { isGeneratorRecord, isListRecord, isObj } from "@/lib/pred";
 import { parseAtUri } from "@/lib/uri";
-
-export const SecretSkyDBVersion1Schema: IndexedDBProps = {
-  name: "SecretSkyDB",
-  version: 2,
-  objectStoresMeta: [
-    {
-      store: "accounts",
-      storeConfig: { keyPath: "did", autoIncrement: false },
-      storeSchema: [
-        { name: "did", keypath: "did", options: { unique: true } },
-        { name: "handle", keypath: "handle", options: { unique: true } },
-        { name: "avatar", keypath: "avatar", options: { unique: false } },
-        {
-          name: "displayName",
-          keypath: "displayName",
-          options: { unique: false },
-        },
-      ],
-    },
-    {
-      store: "feeds",
-      storeConfig: { keyPath: "uri", autoIncrement: false },
-      storeSchema: [
-        { name: "type", keypath: "type", options: { unique: false } },
-        { name: "uri", keypath: "uri", options: { unique: true } },
-        {
-          name: "displayName",
-          keypath: "displayName",
-          options: { unique: false },
-        },
-        {
-          name: "description",
-          keypath: "description",
-          options: { unique: false },
-        },
-        { name: "avatar", keypath: "avatar", options: { unique: false } },
-      ],
-    },
-  ],
-} as const;
+import { useEffect, useState } from "react";
 
 interface DBFeed {
   type: string;
@@ -59,40 +13,6 @@ interface DBFeed {
   description: string;
   avatar: string;
 }
-
-initDB(SecretSkyDBVersion1Schema);
-
-export function DBProvider({ children }: { children: React.ReactNode }) {
-  return <IndexedDB {...SecretSkyDBVersion1Schema}>{children}</IndexedDB>;
-}
-
-export const useAccountUpdate = (profile: BaseProfile) => {
-  const db = useIndexedDB("accounts");
-  useEffect(() => {
-    db.getByID<BaseProfile>(profile.did).then((p) => {
-      if (!p) db.add<BaseProfile>(profile);
-      else db.update<BaseProfile>(profile);
-    });
-  }, [db, profile]);
-};
-
-export const useLoggedAccounts = (current: string) => {
-  const db = useIndexedDB("accounts");
-  const [accounts, setAccounts] = useState<BaseProfile[]>([]);
-  useEffect(() => {
-    db.getAll<BaseProfile>()
-      .then((accounts) => accounts.filter((p) => p.did !== current))
-      .then(setAccounts)
-      .catch(console.error);
-  }, [db, current]);
-  return accounts;
-};
-
-export const useDeleteAccount = (did: string) => {
-  const db = useIndexedDB("accounts");
-  return () => db.deleteRecord(did);
-};
-
 interface FeedInfo extends DBFeed {
   pinned: boolean;
 }
@@ -108,7 +28,8 @@ export const useFeedInfos = () => {
         .then(async (dbFeeds) => {
           const toFetch = prefFeeds.filter(
             (f) =>
-              f.type !== "timeline" && !dbFeeds.find((df) => df.uri === f.value)
+              f.type !== "timeline" &&
+              !dbFeeds.find((df) => df.uri === f.value),
           );
           const fetches = toFetch.map(({ value }) => value).map(getRecord);
           const values = (await Promise.all(fetches)).map(({ uri, value }) => ({
@@ -126,7 +47,7 @@ export const useFeedInfos = () => {
       db.getAll<DBFeed>().then((dbFeeds) => {
         const newFeeds = prefFeeds
           .map(({ value: uri, pinned }) => {
-            if (uri === "following")
+            if (uri === "following") {
               return {
                 uri: "following",
                 type: "timeline",
@@ -135,6 +56,7 @@ export const useFeedInfos = () => {
                 avatar: "",
                 pinned,
               };
+            }
             const dbFeed = dbFeeds.find((df) => df.uri === uri);
             if (dbFeed) return { ...dbFeed, pinned };
             const type = uri.includes("generator") ? "feed" : "list";
