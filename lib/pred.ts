@@ -3,6 +3,12 @@ import { ENCRYPTED_FACET_TYPE } from "./const";
 export {
   isRecord as isPostRecord,
 } from "@atproto/api/dist/client/types/app/bsky/feed/post";
+export {
+  isRecord as isGeneratorRecord,
+} from "@atproto/api/dist/client/types/app/bsky/feed/generator";
+export {
+  isRecord as isListRecord,
+} from "@atproto/api/dist/client/types/app/bsky/graph/list";
 
 export const isObj = (v: unknown): v is object =>
   typeof v === "object" && v !== null;
