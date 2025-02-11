@@ -6,11 +6,11 @@ import prisma from "@/prisma";
 import { NextRequest } from "next/server";
 
 export const GET = async (req: NextRequest) => {
+  const agent = await getAgent(client);
   try {
     const searchParams = req.nextUrl.searchParams;
     const uri = searchParams.get("uri");
     if (!uri) throw new Error("uri is required");
-    const agent = await getAgent(client);
     const { data: { posts: [post] } } = await agent.getPosts({ uris: [uri] });
     const { viewer, record } = post;
     if (!viewer || viewer.replyDisabled) throw new Error("reply is disabled");
