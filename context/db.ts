@@ -1,6 +1,11 @@
-import { IndexedDB, IndexedDBProps, initDB } from "react-indexed-db-hook";
+import {
+  IndexedDB,
+  IndexedDBProps,
+  initDB,
+  useIndexedDB,
+} from "react-indexed-db-hook";
 
-const SecretSkyDBVersion1Schema: IndexedDBProps = {
+const SecretSkyDBSchema: IndexedDBProps = {
   name: "SecretSkyDB",
   version: 2,
   objectStoresMeta: [
@@ -39,8 +44,10 @@ const SecretSkyDBVersion1Schema: IndexedDBProps = {
     },
   ],
 } as const;
-
-initDB(SecretSkyDBVersion1Schema);
+initDB(SecretSkyDBSchema);
 
 export const DBProvider = ({ children }: { children: React.ReactNode }) =>
-  IndexedDB({ ...SecretSkyDBVersion1Schema, children });
+  IndexedDB({ ...SecretSkyDBSchema, children });
+
+export const useFeedsTable = () => useIndexedDB("feeds");
+export const useAccountsTable = () => useIndexedDB("accounts");

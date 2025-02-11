@@ -1,4 +1,3 @@
-import { useIndexedDB } from "react-indexed-db-hook";
 import { useFeeds } from "./use-pref";
 import { GeneratorRecord, ListRecord } from "@/types/bsky";
 import { getRecord } from "@/lib/api";
@@ -7,12 +6,14 @@ import { parseAtUri } from "@/lib/uri";
 import { useEffect, useState } from "react";
 import { DBFeed, FeedInfo } from "@/types/feed";
 import { DEFAULT_TIMELINE_FEED } from "@/lib/const";
+import { useFeedsTable } from "@/context/db";
 
 export const useFeedInfos = () => {
-  const db = useIndexedDB("feeds");
+  const db = useFeedsTable();
   const prefFeeds = useFeeds();
   const [feeds, setFeeds] = useState<FeedInfo[]>([]);
   useEffect(() => {
+    if (!globalThis.window) return;
     const updateInfos = async () =>
       db
         .getAll<DBFeed>()

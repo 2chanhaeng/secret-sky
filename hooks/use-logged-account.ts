@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { BaseProfile } from "@/types/profile";
-import { useIndexedDB } from "react-indexed-db-hook";
+import { useAccountsTable } from "@/context/db";
 
 export const useAccountUpdate = (profile: BaseProfile) => {
-  const db = useIndexedDB("accounts");
+  const db = useAccountsTable();
   useEffect(() => {
     db.getByID<BaseProfile>(profile.did).then((p) => {
       if (!p) db.add<BaseProfile>(profile);
@@ -13,7 +13,7 @@ export const useAccountUpdate = (profile: BaseProfile) => {
 };
 
 export const useLoggedAccounts = (current: string) => {
-  const db = useIndexedDB("accounts");
+  const db = useAccountsTable();
   const [accounts, setAccounts] = useState<BaseProfile[]>([]);
   useEffect(() => {
     db.getAll<BaseProfile>()
@@ -25,6 +25,6 @@ export const useLoggedAccounts = (current: string) => {
 };
 
 export const useDeleteAccount = (did: string) => {
-  const db = useIndexedDB("accounts");
+  const db = useAccountsTable();
   return () => db.deleteRecord(did);
 };
