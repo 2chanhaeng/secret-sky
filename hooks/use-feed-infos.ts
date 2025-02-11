@@ -5,17 +5,8 @@ import { getRecord } from "@/lib/api";
 import { isGeneratorRecord, isListRecord, isObj } from "@/lib/pred";
 import { parseAtUri } from "@/lib/uri";
 import { useEffect, useState } from "react";
-
-interface DBFeed {
-  type: string;
-  uri: string;
-  displayName: string;
-  description: string;
-  avatar: string;
-}
-interface FeedInfo extends DBFeed {
-  pinned: boolean;
-}
+import { DBFeed, FeedInfo } from "@/types/feed";
+import { DEFAULT_TIMELINE_FEED } from "@/lib/const";
 
 export const useFeedInfos = () => {
   const db = useIndexedDB("feeds");
@@ -47,16 +38,7 @@ export const useFeedInfos = () => {
       db.getAll<DBFeed>().then((dbFeeds) => {
         const newFeeds = prefFeeds
           .map(({ value: uri, pinned }) => {
-            if (uri === "following") {
-              return {
-                uri: "following",
-                type: "timeline",
-                displayName: "Following",
-                description: "Following",
-                avatar: "",
-                pinned,
-              };
-            }
+            if (uri === "following") return DEFAULT_TIMELINE_FEED;
             const dbFeed = dbFeeds.find((df) => df.uri === uri);
             if (dbFeed) return { ...dbFeed, pinned };
             const type = uri.includes("generator") ? "feed" : "list";
@@ -103,6 +85,7 @@ interface BlobRef {
   mimeType: `image/${string}`;
   size: number;
 }
+
 const getAvatarLink = (uri: string, avatar: unknown) => {
   if (isBlob(avatar)) {
     const [repo] = parseAtUri(uri);

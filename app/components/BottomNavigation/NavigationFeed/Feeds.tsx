@@ -6,6 +6,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { setCurrentFeed } from "@/hooks/use-current-feed";
 import { useFeedInfos } from "@/hooks/use-feed-infos";
 
 export default function NavigationFeedDrawer({
@@ -26,6 +27,10 @@ export default function NavigationFeedDrawer({
             {feeds.map((feed) => (
               <button
                 key={feed.uri}
+                onClick={() => {
+                  setCurrentFeed(feed);
+                  setOpen(false);
+                }}
                 className="py-2 px-4 flex items-center justify-start gap-2 min-h-12"
               >
                 {feed.avatar && (
