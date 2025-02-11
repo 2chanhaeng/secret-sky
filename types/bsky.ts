@@ -1,6 +1,7 @@
 export type { BskyPreferences as ProfilePref, Facet } from "@atproto/api";
 export type { ProfileViewDetailed as Profile } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 export type {
+  FeedViewPost,
   GeneratorView as FeedView,
   PostView as PostViewType,
   ThreadViewPost,
@@ -8,6 +9,9 @@ export type {
 export type {
   Record as GeneratorRecord,
 } from "@atproto/api/dist/client/types/app/bsky/feed/generator";
+export type {
+  OutputSchema as GetTimelineResponse,
+} from "@atproto/api/dist/client/types/app/bsky/feed/getTimeline";
 export type {
   Record as ListRecord,
 } from "@atproto/api/dist/client/types/app/bsky/graph/list";
