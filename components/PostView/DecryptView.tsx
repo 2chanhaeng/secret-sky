@@ -1,27 +1,21 @@
 "use client";
 
+import { isEncryptedFacet } from "@/lib/pred";
 import { cn } from "@/lib/utils";
+import { Facet } from "@atproto/api";
 import { Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function DecryptView({
+  facets,
   uri,
   sub = false,
 }: {
+  facets?: Facet[];
   uri: string;
   sub?: boolean;
 }) {
-  const [decrypted, setDecrypted] = useState<string>("");
-
-  useEffect(() => {
-    const fetchDecrypted = async () => {
-      const res = await fetch(`/api/decrypt?uri=${uri}`);
-      const decrypted = await res.json();
-      console.log(decrypted);
-      setDecrypted(decrypted);
-    };
-    fetchDecrypted();
-  });
+  const decrypted = useDecrypted(uri, facets);
 
   if (!decrypted) return null;
   return (
@@ -49,3 +43,19 @@ export default function DecryptView({
     </div>
   );
 }
+
+const useDecrypted = (uri: string, facets: Facet[] | undefined) => {
+  const [decrypted, setDecrypted] = useState<string>("");
+
+  useEffect(() => {
+    if (!facets || !facets.some(isEncryptedFacet)) return;
+    const fetchDecrypted = async () => {
+      const res = await fetch(`/api/decrypt?uri=${uri}`);
+      const decrypted = await res.json();
+      setDecrypted(decrypted);
+    };
+    fetchDecrypted();
+  });
+
+  return decrypted;
+};
