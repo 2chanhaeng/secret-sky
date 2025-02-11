@@ -1,8 +1,8 @@
-import { isPostRecord, isReasonRepost } from "@/lib/pred";
+import { isPostRecord, isPostView, isReasonRepost } from "@/lib/pred";
 import AuthorInfo from "../AuthorInfo";
 import DecryptView from "./DecryptView";
 import Mention from "./Mention";
-import { Facet, FeedViewPost, PostViewType } from "@/types/bsky";
+import { Facet, FeedViewPost, PostViewType, ReplyRef } from "@/types/bsky";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { parseAtUri, uriToPath } from "@/lib/uri";
@@ -89,7 +89,7 @@ function LinkToBskyApp({
   );
 }
 
-export function FeedPostView({ post, reason }: FeedViewPost) {
+export function FeedPostView({ post, reason, reply }: FeedViewPost) {
   const { record, uri, author, replyCount } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
@@ -97,6 +97,7 @@ export function FeedPostView({ post, reason }: FeedViewPost) {
   return (
     <article className="border-foreground/20 py-2 my-2 border-t">
       <RepostBy {...reason} />
+      {!reason && <RootParent {...reply} />}
       <AuthorInfo {...author} />
       <PostViewContent uri={uri} text={text} facets={facets} />
       <LinkToBskyApp uri={uri} className="ml-12" />
@@ -136,5 +137,35 @@ function RepostBy(reason: FeedViewPost["reason"]) {
       <Repeat2 size={16} />
       {name} 님이 재개시함
     </span>
+  );
+}
+
+function RootParent(reply: Partial<ReplyRef>) {
+  if (!reply) return null;
+  const { root, parent } = reply;
+  const isDifferent = root?.uri !== parent?.uri;
+  return (
+    <>
+      {isDifferent && <ParentPostView {...root} />}
+      <ParentPostView {...parent} />
+    </>
+  );
+}
+
+export function ParentPostView(post: Record<string, unknown> | undefined) {
+  if (!isPostView(post)) return null;
+  const { record, uri, author, replyCount } = post;
+  if (!isPostRecord(record)) return null;
+  const { text: raw, facets } = record;
+  const text = raw.replace(/\n\n비밀글 보기$/, "");
+  return (
+    <>
+      <AuthorInfo {...author} />
+      <PostViewContent uri={uri} text={text} facets={facets} />
+      <LinkToBskyApp uri={uri} className="ml-12" />
+      <section className="ml-12 text-foreground/60 text-xs mb-2">
+        <Mention count={replyCount ?? 0} uri={uri} />
+      </section>
+    </>
   );
 }

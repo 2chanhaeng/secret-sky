@@ -12,6 +12,7 @@ export {
 export {
   isRecord as isListRecord,
 } from "@atproto/api/dist/client/types/app/bsky/graph/list";
+export { isPostView } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
 export const isObj = (v: unknown): v is object =>
   typeof v === "object" && v !== null;
