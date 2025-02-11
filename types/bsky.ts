@@ -4,6 +4,7 @@ export type {
   FeedViewPost,
   GeneratorView as FeedView,
   PostView as PostViewType,
+  ReasonRepost,
   ThreadViewPost,
 } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 export type {

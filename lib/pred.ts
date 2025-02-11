@@ -4,6 +4,9 @@ export {
   isRecord as isPostRecord,
 } from "@atproto/api/dist/client/types/app/bsky/feed/post";
 export {
+  isReasonRepost,
+} from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+export {
   isRecord as isGeneratorRecord,
 } from "@atproto/api/dist/client/types/app/bsky/feed/generator";
 export {
