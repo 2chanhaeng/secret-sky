@@ -7,7 +7,7 @@ export default async function BottomNavigation() {
   const profile = await getCurrentProfile();
   if (!profile) return <NotLoggedInNavigation />;
   return (
-    <nav className="fixed bottom-0 left-0 right-0 flex justify-around items-center border-t border-foreground/40 bg-background p-2">
+    <nav className="sticky bottom-0 w-full flex justify-around items-center border-t border-foreground/40 bg-background p-2">
       <NavigationFeed />
       <NavigationProfile {...profile} />
     </nav>
@@ -16,7 +16,7 @@ export default async function BottomNavigation() {
 
 function NotLoggedInNavigation() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 flex justify-around items-center border-t border-foreground/40 bg-background p-2">
+    <nav className="sticky bottom-0 w-full flex justify-around items-center border-t border-foreground/40 bg-background p-2">
       <Link href="/auth/login" className="text-foreground/80">
         Login
       </Link>

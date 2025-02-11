@@ -6,14 +6,11 @@ import { FeedPostView } from "@/components/PostView";
 
 export default function Timeline() {
   const { posts, updateFeed } = useFeedPosts();
-  console.log(posts);
+
   return (
-    <section>
-      {posts.map((post) => (
-        <FeedPostView
-          key={`${post.post.uri}/${crypto.randomUUID()}`}
-          {...post}
-        />
+    <section style={{ overflowAnchor: "none" }}>
+      {posts.map(({ key, ...post }) => (
+        <FeedPostView key={key} {...post} />
       ))}
       <Observer callback={updateFeed} />
     </section>
