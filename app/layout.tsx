@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DarkMode from "@/scripts/dark-mode";
-import AutoResizeTextarea from "@/scripts/auto-resize-textarea";
+import BottomNavigation from "./components/BottomNavigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +31,7 @@ export default function RootLayout({
       >
         {children}
         <DarkMode />
+        <BottomNavigation />
       </body>
     </html>
   );
