@@ -7,7 +7,6 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { useTimeline } from "@/context/timeline";
-import { setFeedToLocalStorage } from "@/hooks/use-current-feed";
 import { useFeedInfos } from "@/hooks/use-feed-infos";
 
 export default function NavigationFeedDrawer({
@@ -30,7 +29,6 @@ export default function NavigationFeedDrawer({
               <button
                 key={feed.uri}
                 onClick={() => {
-                  setFeedToLocalStorage(feed);
                   setOpen(false);
                   timeline.feed = feed;
                 }}
