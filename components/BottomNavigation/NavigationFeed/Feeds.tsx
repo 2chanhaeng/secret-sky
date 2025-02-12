@@ -6,7 +6,8 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { setCurrentFeed } from "@/hooks/use-current-feed";
+import { useTimeline } from "@/context/timeline";
+import { setFeedToLocalStorage } from "@/hooks/use-current-feed";
 import { useFeedInfos } from "@/hooks/use-feed-infos";
 
 export default function NavigationFeedDrawer({
@@ -17,6 +18,7 @@ export default function NavigationFeedDrawer({
   setOpen: (open: boolean) => void;
 }) {
   const feeds = useFeedInfos();
+  const timeline = useTimeline();
 
   return (
     <Drawer open={open} onClose={() => setOpen(false)}>
@@ -28,8 +30,9 @@ export default function NavigationFeedDrawer({
               <button
                 key={feed.uri}
                 onClick={() => {
-                  setCurrentFeed(feed);
+                  setFeedToLocalStorage(feed);
                   setOpen(false);
+                  timeline.feed = feed;
                 }}
                 className="py-2 px-4 flex items-center justify-start gap-2 min-h-12"
               >

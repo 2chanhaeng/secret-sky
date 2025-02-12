@@ -1,10 +1,12 @@
-import { getCurrentProfile } from "@/lib/profile";
+"use client";
+
 import Link from "next/link";
 import NavigationProfile from "./NavigationProfile";
 import NavigationFeed from "./NavigationFeed";
+import { useProfile } from "@/hooks/use-profile";
 
-export default async function BottomNavigation() {
-  const profile = await getCurrentProfile();
+export default function BottomNavigation() {
+  const profile = useProfile();
   if (!profile) return <NotLoggedInNavigation />;
   return (
     <nav className="sticky bottom-0 w-full flex justify-around items-center border-t border-foreground/40 bg-background p-2">
