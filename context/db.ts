@@ -1,9 +1,9 @@
-import {
-  IndexedDB,
-  IndexedDBProps,
-  initDB,
-  useIndexedDB,
-} from "react-indexed-db-hook";
+import type { IndexedDBProps } from "react-indexed-db-hook";
+
+const { IndexedDB, initDB, useIndexedDB } =
+  await (typeof window !== "undefined"
+    ? import("react-indexed-db-hook")
+    : { IndexedDB: () => {}, initDB: () => {}, useIndexedDB: () => {} });
 
 const SecretSkyDBSchema: IndexedDBProps = {
   name: "SecretSkyDB",
