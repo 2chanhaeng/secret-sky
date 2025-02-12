@@ -27,6 +27,12 @@ export type {
   OutputSchema as GetPostThreadResponse,
 } from "@atproto/api/dist/client/types/app/bsky/feed/getPostThread";
 export type {
+  OutputSchema as GetFeedResponse,
+} from "@atproto/api/dist/client/types/app/bsky/feed/getFeed";
+export type {
+  OutputSchema as GetListFeedResponse,
+} from "@atproto/api/dist/client/types/app/bsky/feed/getListFeed";
+export type {
   Create as CreateRecord,
 } from "@atproto/api/dist/client/types/com/atproto/repo/applyWrites";
 export type {

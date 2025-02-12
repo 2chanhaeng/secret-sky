@@ -1,12 +1,16 @@
 import {
   FeedView,
+  GetFeedResponse,
+  GetListFeedResponse,
   GetPostThreadResponse,
   GetRecordResponse,
   ListView,
   Profile,
 } from "@/types/bsky";
 import {
+  BSKY_GET_FEED_API,
   BSKY_GET_FEED_GENERATORS_API,
+  BSKY_GET_LIST_FEED_API,
   BSKY_GET_LISTS_API,
   BSKY_GET_POST_THREAD_API,
   BSKY_GET_PROFILE_API,
@@ -30,3 +34,16 @@ export const getFeedGenerators: () => Promise<FeedView[]> = () =>
   fetch(BSKY_GET_FEED_GENERATORS_API).then(parse).then(({ feeds }) => feeds);
 export const getLists: () => Promise<ListView[]> = () =>
   fetch(BSKY_GET_LISTS_API).then(parse).then(({ lists }) => lists);
+export const getFeed: (
+  uri: string,
+  cursor: string,
+) => Promise<GetFeedResponse> = (uri, cursor) =>
+  fetch(`${BSKY_GET_FEED_API}?feed=${uri}&cursor=${cursor}`).then(parse);
+export const getListFeed: (
+  uri: string,
+  cursor: string,
+) => Promise<GetListFeedResponse> = (
+  uri,
+  cursor,
+) =>
+  fetch(`${BSKY_GET_LIST_FEED_API}?feed=${uri}&cursor=${cursor}`).then(parse);

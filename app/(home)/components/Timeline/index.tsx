@@ -5,14 +5,21 @@ import Observer from "@/components/Observer";
 import { FeedPostView } from "@/components/PostView";
 
 export default function Timeline() {
-  const { posts, updateFeed } = useFeedPosts();
+  const { posts, update } = useFeedPosts();
 
   return (
     <section style={{ overflowAnchor: "none" }}>
-      {posts.map(({ key, ...post }) => (
-        <FeedPostView key={key} {...post} />
-      ))}
-      <Observer callback={updateFeed} />
+      {posts.map(({ key, ...post }, i, { length }) =>
+        i !== length - 10 ? (
+          <FeedPostView key={key} {...post} />
+        ) : (
+          <>
+            <FeedPostView key={key} {...post} />
+            <Observer callback={update} />
+          </>
+        )
+      )}
+      <Observer callback={update} />
     </section>
   );
 }
