@@ -1,6 +1,8 @@
+"use client";
+
 import AuthorAvatar from "@/components/AuthorAvatar";
 import InnerForm from "./InnerForm";
-import { getCurrentProfile } from "@/actions/profile";
+import { useProfile } from "@/hooks/use-profile";
 
 export default function PostForm({
   parent,
@@ -17,7 +19,8 @@ export default function PostForm({
   );
 }
 
-async function Author() {
-  const profile = (await getCurrentProfile())!;
+function Author() {
+  const profile = useProfile();
+  if (!profile) return null;
   return <AuthorAvatar {...profile} className="size-12" />;
 }
