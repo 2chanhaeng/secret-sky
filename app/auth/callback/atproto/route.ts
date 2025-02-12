@@ -2,10 +2,9 @@ import { NextRequest } from "next/server";
 import client from "@/lib/client";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { Profile } from "@/types/bsky";
-import { BaseProfile } from "@/types/profile";
 import { getProfile } from "@/lib/api";
-import { setProfile } from "@/lib/profile";
+import { setProfile } from "@/actions/profile";
+import { pickProfile } from "@/lib/profile";
 
 export const GET = async (req: NextRequest) => {
   const params = req.nextUrl.searchParams;
@@ -32,12 +31,3 @@ export const GET = async (req: NextRequest) => {
   cookie.delete("redirectTo");
   return redirect(redirectTo);
 };
-
-const pickProfile = (
-  { did, handle, avatar = "", displayName }: Profile,
-): BaseProfile => ({
-  did,
-  handle,
-  avatar,
-  displayName: displayName ?? handle,
-});

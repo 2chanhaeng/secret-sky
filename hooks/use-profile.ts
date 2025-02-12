@@ -1,14 +1,17 @@
+import { pickProfile } from "@/lib/profile";
 import { Profile } from "@/types/bsky";
+import { BaseProfile } from "@/types/profile";
 import { useEffect, useState } from "react";
 
 const PROFILE_CACHE_KEY = "profile";
 const PREF_API_PATH = "/api/profile";
 
-export const useProfile = (): Profile | null => {
-  const [pref, setProfile] = useState<Profile | null>(null);
+export const useProfile = (): BaseProfile | null => {
+  const [pref, setProfile] = useState<BaseProfile | null>(null);
 
   useEffect(() => {
-    getProfile().then(setProfile).catch(() => setProfile(null));
+    getProfile().then(pickProfile).then(setProfile) //
+      .catch(() => setProfile(null));
   }, []);
 
   return pref;
