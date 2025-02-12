@@ -1,6 +1,6 @@
 import AuthorAvatar from "@/components/AuthorAvatar";
 import InnerForm from "./InnerForm";
-import { getCurrentProfile } from "@/lib/profile";
+import { getCurrentProfile } from "@/actions/profile";
 
 export default function PostForm({
   parent,
