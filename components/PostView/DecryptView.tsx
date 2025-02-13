@@ -1,6 +1,6 @@
 "use client";
 
-import { hasEncryptedFacet, isEncryptedFacet } from "@/lib/pred";
+import { hasEncryptedFacet } from "@/lib/pred";
 import { cn } from "@/lib/utils";
 import { Facet } from "@atproto/api";
 import { Lock } from "lucide-react";
