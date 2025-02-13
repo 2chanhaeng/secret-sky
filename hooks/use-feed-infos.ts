@@ -15,28 +15,26 @@ export const useFeedInfos = () => {
   useEffect(() => {
     if (!globalThis.window) return;
     const updateInfos = async () =>
-      db
-        .getAll<DBFeed>()
-        .then(async (dbFeeds) => {
-          const toFetch = prefFeeds.filter(
-            (f) =>
-              f.type !== "timeline" &&
-              !dbFeeds.find((df) => df.uri === f.value),
-          );
-          const fetches = toFetch.map(({ value }) => value).map(getRecord);
-          const values = (await Promise.all(fetches)).map(({ uri, value }) => ({
-            uri,
-            ...value,
-          }));
-          return values;
-        })
+      db?.getAll<DBFeed>().then(async (dbFeeds) => {
+        const toFetch = prefFeeds.filter(
+          (f) =>
+            f.type !== "timeline" &&
+            !dbFeeds.find((df) => df.uri === f.value),
+        );
+        const fetches = toFetch.map(({ value }) => value).map(getRecord);
+        const values = (await Promise.all(fetches)).map(({ uri, value }) => ({
+          uri,
+          ...value,
+        }));
+        return values;
+      })
         .then((values) =>
           values
             .filter((feed) => isListRecord(feed) || isGeneratorRecord(feed))
             .forEach((feed) => db.add<DBFeed>(pickFeed(feed)))
         );
     const getInfos = async () =>
-      db.getAll<DBFeed>().then((dbFeeds) => {
+      db?.getAll<DBFeed>().then((dbFeeds) => {
         const newFeeds = prefFeeds
           .map(({ value: uri, pinned }) => {
             if (uri === "following") return DEFAULT_TIMELINE_FEED;

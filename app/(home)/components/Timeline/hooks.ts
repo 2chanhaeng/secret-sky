@@ -1,5 +1,5 @@
 import { useTimeline } from "@/context/timeline";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const useFeedPosts = () => {
   const timeline = useTimeline();
@@ -9,5 +9,9 @@ export const useFeedPosts = () => {
     setPosts(timeline.posts);
   }, [timeline.posts]);
 
-  return { posts, update: timeline.update.bind(timeline) };
+  const update = useCallback(() => {
+    return timeline.update();
+  }, [timeline]);
+
+  return { posts, update };
 };

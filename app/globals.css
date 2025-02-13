@@ -97,7 +97,7 @@ body {
   }
 
   main {
-    @apply w-[384px] px-2 overflow-y-auto;
+    @apply h-[calc(100vh-57px)] w-[384px] px-2 overflow-y-auto;
   }
 
   textarea {

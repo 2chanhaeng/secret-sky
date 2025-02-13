@@ -1,7 +1,7 @@
 import { getAgent } from "@/lib/agent";
 import client from "@/lib/client";
 
-export const GET = async (_: Request) => {
+export const GET = async () => {
   const agent = await getAgent(client);
   try {
     const actor = agent.assertDid;
