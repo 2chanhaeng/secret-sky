@@ -10,7 +10,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import Link from "next/link";
+import { useDeleteAccount } from "@/hooks/use-logged-account";
+import { deleteProfile, useProfile } from "@/hooks/use-profile";
 
 export function NavigationProfileFooter() {
   return (
@@ -52,6 +53,7 @@ function AddAccount() {
 }
 
 function Logout() {
+  const handleLogout = useDeleteAccount(useProfile()!.did);
   return (
     <Drawer>
       <DrawerTrigger>
@@ -65,11 +67,17 @@ function Logout() {
           <DrawerDescription>정말로 로그아웃 하시겠습니까?</DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-4 pt-0">
-          <Link href="/auth/logout" passHref>
-            <Button variant="destructive" className="w-full">
-              로그아웃
-            </Button>
-          </Link>
+          <Button
+            variant="destructive"
+            className="w-full"
+            onClick={() => {
+              handleLogout();
+              deleteProfile();
+              window.location.replace("/auth/logout");
+            }}
+          >
+            로그아웃
+          </Button>
           <DrawerClose>
             <Button variant="outline" className="w-full">
               뒤로 가기
