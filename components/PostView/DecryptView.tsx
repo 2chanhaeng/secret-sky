@@ -1,6 +1,6 @@
 "use client";
 
-import { isEncryptedFacet } from "@/lib/pred";
+import { hasEncryptedFacet, isEncryptedFacet } from "@/lib/pred";
 import { cn } from "@/lib/utils";
 import { Facet } from "@atproto/api";
 import { Lock } from "lucide-react";
@@ -48,7 +48,7 @@ const useDecrypted = (uri: string, facets: Facet[] | undefined) => {
   const [decrypted, setDecrypted] = useState<string>("");
 
   useEffect(() => {
-    if (!facets || !facets.some(isEncryptedFacet)) return;
+    if (!hasEncryptedFacet(facets)) return;
     const fetchDecrypted = async () => {
       const res = await fetch(`/api/decrypt?uri=${uri}`);
       const decrypted = await res.json();

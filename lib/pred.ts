@@ -1,5 +1,6 @@
 import { EncryptedValue } from "@/types/facet";
 import { ENCRYPTED_FACET_TYPE } from "./const";
+import { Facet } from "@atproto/api";
 export {
   isRecord as isPostRecord,
 } from "@atproto/api/dist/client/types/app/bsky/feed/post";
@@ -26,3 +27,5 @@ export const isEncryptedFacet = (v: unknown): v is EncryptedValue => (
   hasProp(v, "$type") &&
   (v.$type === ENCRYPTED_FACET_TYPE)
 );
+export const hasEncryptedFacet = (v: Facet[] | undefined): boolean =>
+  v ? v.map(({ features }) => features).flat().some(isEncryptedFacet) : false;
