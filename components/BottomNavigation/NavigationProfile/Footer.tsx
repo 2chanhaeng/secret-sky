@@ -53,7 +53,11 @@ function AddAccount() {
 }
 
 function Logout() {
-  const handleLogout = useDeleteAccount(useProfile()!.did);
+  const useLogout = () => {
+    useDeleteAccount(useProfile()?.did ?? "");
+    deleteProfile();
+    window.location.replace("/auth/logout");
+  };
   return (
     <Drawer>
       <DrawerTrigger>
@@ -67,15 +71,7 @@ function Logout() {
           <DrawerDescription>정말로 로그아웃 하시겠습니까?</DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-4 pt-0">
-          <Button
-            variant="destructive"
-            className="w-full"
-            onClick={() => {
-              handleLogout();
-              deleteProfile();
-              window.location.replace("/auth/logout");
-            }}
-          >
+          <Button variant="destructive" className="w-full" onClick={useLogout}>
             로그아웃
           </Button>
           <DrawerClose>
