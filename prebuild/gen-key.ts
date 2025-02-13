@@ -2,8 +2,12 @@ import { appendFile } from "fs/promises";
 import { exportPKCS8, exportSPKI } from "jose";
 
 export const main = () => {
-  genAndSaveEcdsaKeys();
-  genAndSaveEcdhKeys();
+  const {
+    ECDH_PRIVATE_KEY,
+    ECDSA_1_PRIVATE_KEY,
+  } = process.env;
+  if (!ECDH_PRIVATE_KEY) genAndSaveEcdsaKeys();
+  if (!ECDSA_1_PRIVATE_KEY) genAndSaveEcdhKeys();
 };
 
 // ECDSA keys
