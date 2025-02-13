@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/drawer";
 import { useTimeline } from "@/context/timeline";
 import { useFeedInfos } from "@/hooks/use-feed-infos";
+import { redirect } from "next/navigation";
 
 export default function NavigationFeedDrawer({
   open,
@@ -17,7 +18,7 @@ export default function NavigationFeedDrawer({
   setOpen: (open: boolean) => void;
 }) {
   const feeds = useFeedInfos();
-  const timeline = useTimeline();
+  const { change } = useTimeline();
 
   return (
     <Drawer open={open} onClose={() => setOpen(false)}>
@@ -30,7 +31,8 @@ export default function NavigationFeedDrawer({
                 key={feed.uri}
                 onClick={() => {
                   setOpen(false);
-                  timeline.feed = feed;
+                  change(feed);
+                  redirect("/");
                 }}
                 className="py-2 px-4 flex items-center justify-start gap-2 min-h-12"
               >

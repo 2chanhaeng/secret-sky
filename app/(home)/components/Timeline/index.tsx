@@ -1,11 +1,11 @@
 "use client";
 
-import { useFeedPosts } from "./hooks";
 import Observer from "@/components/Observer";
 import { FeedPostView } from "@/components/PostView";
+import { useTimeline } from "@/context/timeline";
 
 export default function Timeline() {
-  const { posts, update } = useFeedPosts();
+  const { posts, update } = useTimeline();
 
   return (
     <section style={{ overflowAnchor: "none" }}>
