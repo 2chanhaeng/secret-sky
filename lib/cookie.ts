@@ -66,6 +66,7 @@ const encryptedCookie = //
         return value as Payload | undefined;
       } catch (e) {
         console.error(`Error getting cookie: ${key}`, e);
+        (await cookies()).delete(key);
       }
     },
 

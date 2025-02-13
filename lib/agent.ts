@@ -12,12 +12,12 @@ export const getAgent: //
   ) => {
     const did = (await sessions.get())?.sub;
     if (!did) redirect(`/auth/login?redirectTo=${redirectTo}`);
-    const session = await client
+    const agent = await client
       .restore(did)
+      .then((session) => new Agent(session))
       .catch((e) => {
         console.error("getAgent error: ", e);
         redirect(`/auth/login?redirectTo=${redirectTo}`);
       });
-    const agent = new Agent(session);
     return agent;
   };
