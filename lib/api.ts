@@ -21,7 +21,7 @@ import { parseAtUri } from "./uri";
 const parse = (res: Response) => res.json();
 
 export const getProfile: (handle: string) => Promise<Profile> = (handle) =>
-  fetch(`${BSKY_GET_PROFILE_API}?actor=${handle}`).then(parse);
+  fetch(`${BSKY_GET_PROFILE_API}?actor=${handle.replace("@", "")}`).then(parse);
 export const getPostThread: (uri: string) => Promise<GetPostThreadResponse> = //
   (uri) => fetch(`${BSKY_GET_POST_THREAD_API}?uri=${uri}`).then(parse);
 export const getRecord: (uri: string) => Promise<GetRecordResponse> = (uri) => {
