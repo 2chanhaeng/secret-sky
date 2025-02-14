@@ -20,7 +20,7 @@ export default function PostForm({
 }
 
 function Author() {
-  const profile = useProfile();
+  const { profile } = useProfile();
   if (!profile) return null;
   return <AuthorAvatar {...profile} className="size-12" />;
 }

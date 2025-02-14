@@ -7,7 +7,7 @@ export const useAccountCache = <T>(
 ): T | null => {
   const defaults = initial ?? null;
   const [pref, setCache] = useState<T | null>(defaults);
-  const did = useProfile()?.did;
+  const did = useProfile().profile?.did;
 
   useEffect(() => {
     if (did) {
@@ -19,7 +19,7 @@ export const useAccountCache = <T>(
 };
 
 export const useRefreshingAccountCache = (path: string) => {
-  const did = useProfile()?.did;
+  const did = useProfile().profile?.did;
   useEffect(() => {
     if (did) refreshCache(path, did);
   }, [path, did]);

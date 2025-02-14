@@ -11,7 +11,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useDeleteAccount } from "@/hooks/use-logged-account";
-import { deleteProfile, useProfile } from "@/hooks/use-profile";
+import { useProfile } from "@/hooks/use-profile";
 
 export function NavigationProfileFooter() {
   return (
@@ -54,7 +54,8 @@ function AddAccount() {
 
 function Logout() {
   const useLogout = () => {
-    useDeleteAccount(useProfile()?.did ?? "");
+    const { profile, deleteProfile } = useProfile();
+    useDeleteAccount(profile?.did ?? "");
     deleteProfile();
     window.location.replace("/auth/logout");
   };

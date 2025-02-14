@@ -4,7 +4,7 @@ import { BaseProfile } from "@/types/profile";
 import { ChevronRight, XIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { deleteProfile } from "@/hooks/use-profile";
+import { useProfile } from "@/hooks/use-profile";
 import {
   useAccountUpdate,
   useDeleteAccount,
@@ -56,6 +56,7 @@ function LoggedAccounts({ current }: { current: string }) {
 }
 
 function ChangeAccount({ avatar, displayName, handle, did }: BaseProfile) {
+  const { deleteProfile } = useProfile();
   return (
     <div className="py-2 px-4 flex justify-between items-center">
       <button

@@ -4,9 +4,15 @@ import Link from "next/link";
 import NavigationProfile from "./NavigationProfile";
 import NavigationFeed from "./NavigationFeed";
 import { useProfile } from "@/hooks/use-profile";
+import { useEffect } from "react";
 
 export default function BottomNavigation() {
-  const profile = useProfile();
+  const { profile, fetchProfile } = useProfile();
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
   if (!profile) return <NotLoggedInNavigation />;
   return (
     <nav className="sticky bottom-0 w-full flex justify-around items-center border-t border-foreground/40 bg-background p-2">

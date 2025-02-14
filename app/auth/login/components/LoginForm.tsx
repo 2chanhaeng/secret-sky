@@ -8,6 +8,7 @@ import * as z from "zod";
 import { getProfile } from "@/lib/api";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useProfile } from "@/hooks/use-profile";
 
 const formSchema = z.object({
   handle: z
@@ -31,11 +32,12 @@ export default function LoginForm({
     reValidateMode: "onSubmit",
   });
   const [handle, setHandle] = useState<string>("");
+  const { deleteProfile } = useProfile();
   useEffect(() => {
     form.setValue("handle", handle);
   }, [handle, form]);
   const setError = (message: string) => form.setError("handle", { message });
-  const onSubmit = onSubmitWhenError(setError);
+  const onSubmit = onSubmitWhenError(deleteProfile, setError);
   const submit = form.handleSubmit(onSubmit);
   form.setValue("redirectTo", redirectTo);
 
@@ -89,12 +91,13 @@ export default function LoginForm({
 }
 
 const onSubmitWhenError =
-  (setError: (message: string) => void) =>
+  (deleteProfile: () => void, setError: (message: string) => void) =>
   async ({ handle: raw, redirectTo }: FormSchema) => {
     const handle = raw.toLowerCase().replace(/[@\s]/g, "");
     const res = await getProfile(handle);
     if ("error" in res)
       return setError("핸들에 문제가 있습니다. 다시 확인해주세요.");
+    deleteProfile();
     redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
   };
 const getError = (error: undefined | FieldError) =>
