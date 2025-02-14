@@ -53,9 +53,10 @@ function AddAccount() {
 }
 
 function Logout() {
+  const { profile, deleteProfile } = useProfile();
+  const deleteFromDb = useDeleteAccount(profile?.did ?? "");
   const useLogout = () => {
-    const { profile, deleteProfile } = useProfile();
-    useDeleteAccount(profile?.did ?? "");
+    deleteFromDb();
     deleteProfile();
     window.location.replace("/auth/logout");
   };
