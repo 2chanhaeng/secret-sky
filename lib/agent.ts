@@ -8,12 +8,12 @@ import { redirect } from "next/navigation";
 export const getAgent: //
   (client: NodeOAuthClient, redirectTo?: string) => Promise<Agent> = async ( //
     client,
-    redirectTo = "/",
+    redirectTo,
   ) => {
     const did = (await cookies()).get("did")?.value;
-    if (!did) redirect(`/auth/login?redirectTo=${redirectTo}`);
+    if (!did) redirectOrThrow(redirectTo);
     const agent = await client
-      .restore(did)
+      .restore(did!)
       .then((session) => new Agent(session))
       .catch((e) => {
         console.error("getAgent error: ", e);
@@ -21,3 +21,8 @@ export const getAgent: //
       });
     return agent;
   };
+
+const redirectOrThrow = (redirectTo?: string) => {
+  if (redirectTo) redirect(`/auth/login?redirectTo=${redirectTo}`);
+  else throw new Error("Unauthorized");
+};
