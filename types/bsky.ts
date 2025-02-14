@@ -7,6 +7,7 @@ export type {
   ReasonRepost,
   ReplyRef,
   ThreadViewPost,
+  ViewerState as Viewer,
 } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 export type {
   Record as GeneratorRecord,
@@ -37,7 +38,6 @@ export type {
 } from "@atproto/api/dist/client/types/com/atproto/repo/applyWrites";
 export type {
   SavedFeed,
-  ViewerState as Viewer,
 } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 export type {
   ListView,

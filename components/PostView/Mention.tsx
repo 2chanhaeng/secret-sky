@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -7,18 +9,25 @@ import {
 } from "@/components/ui/dialog";
 import { MessageSquare } from "lucide-react";
 import PostForm from "../PostForm";
+import { Viewer } from "@/types/bsky";
+import { buttonVariants } from "../ui/button";
 
 export default function Mention({
-  count,
+  count = 0,
+  viewer,
   uri,
+  iconSize = 16,
 }: {
-  count: number;
+  count?: number;
+  viewer?: Viewer;
   uri: string;
+  iconSize: number;
 }) {
+  if (!viewer || viewer.replyDisabled) return null;
   return (
     <Dialog>
-      <DialogTrigger className="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground">
-        <MessageSquare /> {count > 0 ? count : ""}
+      <DialogTrigger className={buttonVariants({ variant: "ghost" })}>
+        <MessageSquare size={iconSize} /> {count > 0 ? count : ""}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

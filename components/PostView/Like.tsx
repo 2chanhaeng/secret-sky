@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
 import { Viewer } from "@/types/bsky";
 import { getPostThread } from "@/lib/api";
-import { isPostView, isThreadViewPost } from "@/lib/pred";
+import { isThreadViewPost } from "@/lib/pred";
 
 export default function Like({
   uri,

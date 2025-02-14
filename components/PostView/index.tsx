@@ -7,13 +7,11 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { parseAtUri, uriToPath } from "@/lib/uri";
 import { ExternalLink, Repeat2 } from "lucide-react";
+import Like from "./Like";
+import { Button, buttonVariants } from "../ui/button";
 
-export function MainPostView({
-  uri,
-  author,
-  record,
-  replyCount,
-}: PostViewType) {
+export function MainPostView(post: PostViewType) {
+  const { uri, author, record } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, createdAt, facets } = record;
   const date = new Intl.DateTimeFormat("ko-KR", {
@@ -28,24 +26,14 @@ export function MainPostView({
         <p className="text-lg">{text}</p>
         <DecryptView facets={facets} uri={uri} />
       </section>
-      <p className="text-foreground/60 text-xs pb-1 flex gap-2">
-        {date}
-        <LinkToBskyApp uri={uri} />
-      </p>
-      <section>
-        <Mention count={replyCount ?? 0} uri={uri} />
-      </section>
+      <p className="text-foreground/60 text-xs pb-1 flex gap-2">{date}</p>
+      <PostFooter {...post} />
     </article>
   );
 }
 
-export function SubPostView({
-  uri,
-  author,
-  record,
-  replyCount,
-  kind = "sub",
-}: PostViewType & { kind?: string }) {
+export function SubPostView(post: PostViewType & { kind?: string }) {
+  const { uri, author, record, kind = "sub" } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
@@ -63,10 +51,7 @@ export function SubPostView({
           <DecryptView facets={facets} uri={uri} sub />
         </section>
       </Link>
-      <LinkToBskyApp uri={uri} className="ml-12" />
-      <section className="ml-12 text-foreground/60 text-xs">
-        <Mention count={replyCount ?? 0} uri={uri} />
-      </section>
+      <PostFooter {...post} />
     </article>
   );
 }
@@ -74,23 +59,25 @@ export function SubPostView({
 function LinkToBskyApp({
   uri,
   className,
+  iconSize = 16,
 }: {
   uri: string;
   className?: string;
+  iconSize: number;
 }) {
   const path = uriToPath(uri);
   return (
     <Link
       href={`https://bsky.app${path}`}
-      className={`text-foreground/60 text-xs pb-1 hover:underline ${className}`}
+      className={`${buttonVariants({ variant: "ghost" })} ${className}`}
     >
-      블루스카이에서 보기 <ExternalLink className="inline" size={12} />
+      <ExternalLink className="inline" size={iconSize} />
     </Link>
   );
 }
 
 export function FeedPostView({ post, reason, reply }: FeedViewPost) {
-  const { record, uri, author, replyCount } = post;
+  const { record, uri, author } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
@@ -100,10 +87,7 @@ export function FeedPostView({ post, reason, reply }: FeedViewPost) {
       {!reason && <RootParent {...reply} />}
       <AuthorInfo {...author} />
       <PostViewContent uri={uri} text={text} facets={facets} />
-      <LinkToBskyApp uri={uri} className="ml-12" />
-      <section className="ml-12 text-foreground/60 text-xs">
-        <Mention count={replyCount ?? 0} uri={uri} />
-      </section>
+      <PostFooter {...post} />
     </article>
   );
 }
@@ -154,7 +138,7 @@ function RootParent(reply: Partial<ReplyRef>) {
 
 export function ParentPostView(post: Record<string, unknown> | undefined) {
   if (!isPostView(post)) return null;
-  const { record, uri, author, replyCount } = post;
+  const { record, uri, author } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
@@ -162,10 +146,33 @@ export function ParentPostView(post: Record<string, unknown> | undefined) {
     <>
       <AuthorInfo {...author} />
       <PostViewContent uri={uri} text={text} facets={facets} />
-      <LinkToBskyApp uri={uri} className="ml-12" />
-      <section className="ml-12 text-foreground/60 text-xs mb-2">
-        <Mention count={replyCount ?? 0} uri={uri} />
-      </section>
+      <PostFooter {...post} />
     </>
+  );
+}
+function PostFooter({
+  uri,
+  viewer,
+  replyCount,
+  likeCount,
+  className = "",
+  iconSize = 16,
+}: PostViewType & {
+  className?: string;
+  iconSize?: number;
+}) {
+  return (
+    <section
+      className={`ml-12 text-foreground/60 text-xs flex justify-between has-[>:only-child]:justify-end ${className}`}
+    >
+      <Mention
+        count={replyCount}
+        uri={uri}
+        viewer={viewer}
+        iconSize={iconSize}
+      />
+      <Like uri={uri} count={likeCount} viewer={viewer} iconSize={iconSize} />
+      <LinkToBskyApp uri={uri} iconSize={iconSize} />
+    </section>
   );
 }
