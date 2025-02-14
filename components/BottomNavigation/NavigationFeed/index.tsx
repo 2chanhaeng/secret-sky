@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { House } from "lucide-react";
 import React, { useState } from "react";
 import NavigationFeedDrawer from "./Feeds";
+import { useTimeline } from "@/context/timeline";
 
 interface MouseCoords {
   x: number;
@@ -16,6 +17,7 @@ export default function NavigationFeed() {
   const [startTime, setStartTime] = useState(-1);
   const [startCoords, setStartCoords] = useState(INITIAL_COORDS);
   const [open, setOpen] = useState(false);
+  const { init } = useTimeline();
 
   const LONG_PRESS_THRESHOLD = 1000;
   const DRAG_THRESHOLD = 20;
@@ -34,8 +36,13 @@ export default function NavigationFeed() {
     if (dy > DRAG_THRESHOLD || elapsed >= LONG_PRESS_THRESHOLD) {
       setOpen(true);
     } else {
-      const behavior = window.scrollY > 2000 ? "smooth" : "auto";
-      window.scrollTo({ top: 0, behavior });
+      if (window.location.pathname === "/") {
+        init();
+        const behavior = window.scrollY > 2000 ? "smooth" : "auto";
+        document.querySelector("main")?.scrollTo({ top: 0, behavior });
+      } else {
+        window.location.href = "/";
+      }
     }
 
     setStartTime(-1);

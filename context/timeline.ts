@@ -20,6 +20,7 @@ interface FeedStoreType {
   posts: FeedViewPostWithKey[];
   update: () => Promise<void>;
   change: Dispatch<SetStateAction<FeedInfo>>;
+  init: () => Promise<void>;
 }
 
 export const useFeedStore = (): FeedStoreType => {
@@ -43,14 +44,29 @@ export const useFeedStore = (): FeedStoreType => {
     setIsUpdating(false);
   }, [feed, cursor, isUpdating]);
   const change = setFeed;
+  const init = useCallback(async () => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+    const { feed: posts, cursor: newCursor = "" } = //
+      await fetchFeed(feed)("");
+    setPosts(appendPosts(posts));
+    setCursor(newCursor);
+    setIsUpdating(false);
+  }, [feed, isUpdating]);
 
-  return { feed, posts, update, change };
+  return { feed, posts, update, change, init };
 };
 
 const updatePosts = (news: FeedViewPost[]) => (prev: FeedViewPostWithKey[]) => {
   const keyset = new Set(prev.map(({ key }) => key));
   const toAdd = appendKeys(news).filter((post) => !keyset.has(post.key));
   return [...prev, ...toAdd];
+};
+
+const appendPosts = (news: FeedViewPost[]) => (prev: FeedViewPostWithKey[]) => {
+  const keyset = new Set(prev.map(({ key }) => key));
+  const toAdd = appendKeys(news).filter((post) => !keyset.has(post.key));
+  return [...toAdd, ...prev];
 };
 
 const fetchFeed = ({
