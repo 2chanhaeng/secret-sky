@@ -33,3 +33,5 @@ export const DEFAULT_TIMELINE_FEED = {
   avatar: "",
   pinned: true,
 } as const;
+export const BSKY_CDN_URL = "https://cdn.bsky.app/img";
+export const BSKY_CDN_IMAGE_PATH = `${BSKY_CDN_URL}/feed_fullsize/plain`;

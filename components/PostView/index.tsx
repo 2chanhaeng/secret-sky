@@ -1,4 +1,9 @@
-import { isPostRecord, isPostView, isReasonRepost } from "@/lib/pred";
+import {
+  isImageView,
+  isPostRecord,
+  isPostView,
+  isReasonRepost,
+} from "@/lib/pred";
 import AuthorInfo from "../AuthorInfo";
 import DecryptView from "./DecryptView";
 import Mention from "./Mention";
@@ -8,12 +13,13 @@ import { cn } from "@/lib/utils";
 import { parseAtUri, uriToPath } from "@/lib/uri";
 import { ExternalLink, Repeat2 } from "lucide-react";
 import Like from "./Like";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
+import ImageView from "./ImageView";
 
 export function MainPostView(post: PostViewType) {
   const { uri, author, record } = post;
   if (!isPostRecord(record)) return null;
-  const { text: raw, createdAt, facets } = record;
+  const { text: raw, createdAt, facets, embed } = record;
   const date = new Intl.DateTimeFormat("ko-KR", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -25,6 +31,7 @@ export function MainPostView(post: PostViewType) {
       <section>
         <p className="text-lg">{text}</p>
         <DecryptView facets={facets} uri={uri} />
+        <ImageView uri={uri} embed={embed} />
       </section>
       <p className="text-foreground/60 text-xs pb-1 flex gap-2">{date}</p>
       <PostFooter {...post} />
@@ -33,7 +40,7 @@ export function MainPostView(post: PostViewType) {
 }
 
 export function SubPostView(post: PostViewType & { kind?: string }) {
-  const { uri, author, record, kind = "sub" } = post;
+  const { uri, author, record, kind = "sub", embed } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
@@ -49,6 +56,7 @@ export function SubPostView(post: PostViewType & { kind?: string }) {
         <section className="ml-12">
           <p className="text-base">{text}</p>
           <DecryptView facets={facets} uri={uri} sub />
+          <ImageView uri={uri} embed={embed} />
         </section>
       </Link>
       <PostFooter {...post} />
@@ -79,14 +87,14 @@ function LinkToBskyApp({
 export function FeedPostView({ post, reason, reply }: FeedViewPost) {
   const { record, uri, author } = post;
   if (!isPostRecord(record)) return null;
-  const { text: raw, facets } = record;
+  const { text: raw, facets, embed } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
   return (
     <article className="border-foreground/20 py-2 my-2 border-t">
       <RepostBy {...reason} />
       {!reason && <RootParent {...reply} />}
       <AuthorInfo {...author} />
-      <PostViewContent uri={uri} text={text} facets={facets} />
+      <PostViewContent uri={uri} text={text} facets={facets} embed={embed} />
       <PostFooter {...post} />
     </article>
   );
@@ -96,10 +104,12 @@ function PostViewContent({
   uri,
   text,
   facets,
+  embed,
 }: {
   uri: string;
   text: string;
   facets?: Facet[];
+  embed: unknown;
 }) {
   const [repo, , rkey] = parseAtUri(uri);
   return (
@@ -107,6 +117,7 @@ function PostViewContent({
       <section className="ml-12">
         <p className="text-base">{text}</p>
         <DecryptView facets={facets} uri={uri} sub />
+        <ImageView uri={uri} embed={embed} />
       </section>
     </Link>
   );
@@ -138,14 +149,14 @@ function RootParent(reply: Partial<ReplyRef>) {
 
 export function ParentPostView(post: Record<string, unknown> | undefined) {
   if (!isPostView(post)) return null;
-  const { record, uri, author } = post;
+  const { record, uri, author, embed } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
   return (
     <>
       <AuthorInfo {...author} />
-      <PostViewContent uri={uri} text={text} facets={facets} />
+      <PostViewContent uri={uri} text={text} facets={facets} embed={embed} />
       <PostFooter {...post} />
     </>
   );

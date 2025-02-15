@@ -1,4 +1,8 @@
-export type { BskyPreferences as ProfilePref, Facet } from "@atproto/api";
+export type {
+  BlobRef,
+  BskyPreferences as ProfilePref,
+  Facet,
+} from "@atproto/api";
 export type { ProfileViewDetailed as Profile } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 export type {
   FeedViewPost,
@@ -9,6 +13,9 @@ export type {
   ThreadViewPost,
   ViewerState as Viewer,
 } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+export type {
+  View as ImageViewType,
+} from "@atproto/api/dist/client/types/app/bsky/embed/images";
 export type {
   Record as GeneratorRecord,
 } from "@atproto/api/dist/client/types/app/bsky/feed/generator";
