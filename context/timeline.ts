@@ -5,6 +5,7 @@ import { DEFAULT_TIMELINE_FEED } from "@/lib/const";
 import { FeedViewPost, GetTimelineResponse } from "@/types/bsky";
 import { FeedInfo } from "@/types/feed";
 import { FeedViewPostWithKey } from "@/types/timeline";
+import { redirect } from "next/navigation";
 import {
   createContext,
   Dispatch,
@@ -80,7 +81,9 @@ const fetchFeed = ({
 };
 
 const getTimeline = (cursor: string): Promise<GetTimelineResponse> =>
-  fetch(`/api/timeline?cursor=${cursor}`).then((res) => res.json());
+  fetch(`/api/timeline?cursor=${cursor}`) //
+    .then((res) => res.json()) //
+    .catch(() => redirect("/auth/logout"));
 
 const appendKeys = (posts: FeedViewPost[]): FeedViewPostWithKey[] =>
   posts.map((post) => ({ ...post, key: getKey(post) }));
@@ -91,11 +94,13 @@ const getKey = (post: FeedViewPost): string =>
     ? `${post.post.uri}/${post.reason.indexedAt ?? ""}`
     : post.post.uri;
 
-const TimelineContext = createContext<FeedStoreType>({
+const INIT_TIMELINE_FEED: FeedStoreType = {
   feed: DEFAULT_TIMELINE_FEED,
   posts: [],
   update: async () => {},
   change: async () => {},
-});
+  init: async () => {},
+};
+const TimelineContext = createContext<FeedStoreType>(INIT_TIMELINE_FEED);
 export const TimelineProvider = TimelineContext.Provider;
 export const useTimeline = () => use(TimelineContext);
