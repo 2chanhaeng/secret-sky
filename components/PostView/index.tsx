@@ -1,9 +1,4 @@
-import {
-  isImageView,
-  isPostRecord,
-  isPostView,
-  isReasonRepost,
-} from "@/lib/pred";
+import { isPostRecord, isPostView, isReasonRepost } from "@/lib/pred";
 import AuthorInfo from "../AuthorInfo";
 import DecryptView from "./DecryptView";
 import Mention from "./Mention";
