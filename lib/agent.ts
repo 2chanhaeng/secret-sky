@@ -17,8 +17,8 @@ export const getAgent: //
       .then((session) => new Agent(session))
       .catch((e) => {
         console.error("getAgent error: ", e);
-        redirect(`/auth/login?redirectTo=${redirectTo}`);
       });
+    if (!agent) redirect(`/auth?handle=${did}&redirectTo=${redirectTo}`);
     return agent;
   };
 
