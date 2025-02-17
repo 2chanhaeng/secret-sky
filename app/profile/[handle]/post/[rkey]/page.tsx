@@ -7,7 +7,6 @@ import {
 import { MainPostView, SubPostView } from "@/components/PostView";
 import { PostViewType } from "@/types/bsky";
 import { POST_TYPE } from "@/lib/const";
-import NewPost from "@/components/NewPost";
 import { getAgentPage } from "@/lib/agent";
 import client from "@/lib/client";
 
@@ -41,7 +40,6 @@ export default async function PostPage({
             {...(reply.post as PostViewType)}
           />
         ))}
-      <NewPost />
     </main>
   );
 }

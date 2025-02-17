@@ -15,7 +15,7 @@ export default function BottomNavigation() {
 
   if (!profile) return <NotLoggedInNavigation />;
   return (
-    <nav className="sticky bottom-0 w-full flex justify-around items-center border-t border-foreground/40 bg-background p-2">
+    <nav className="sticky bottom-0 w-full flex justify-around items-center border-t border-foreground/40 bg-background py-2 px-[calc(max(1rem,50vw-300px))]">
       <NavigationFeed />
       <NavigationProfile {...profile} />
     </nav>

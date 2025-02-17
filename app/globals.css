@@ -101,7 +101,7 @@ body {
   }
 
   main {
-    @apply h-[calc(100vh-57px)] w-[384px] px-2 overflow-y-auto;
+    @apply min-h-[calc(100vh-57px)] w-full min-w-[384px] max-w-[600px] px-2 overflow-y-auto;
   }
 
   textarea {
