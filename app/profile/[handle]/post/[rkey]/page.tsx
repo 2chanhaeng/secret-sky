@@ -8,7 +8,8 @@ import { MainPostView, SubPostView } from "@/components/PostView";
 import { PostViewType } from "@/types/bsky";
 import { POST_TYPE } from "@/lib/const";
 import NewPost from "@/components/NewPost";
-import { getPostThread } from "@/lib/api";
+import { getAgentPage } from "@/lib/agent";
+import client from "@/lib/client";
 
 export default async function PostPage({
   params,
@@ -18,7 +19,10 @@ export default async function PostPage({
   const { handle, rkey } = await params;
   await redirectIfHandleIsDid(handle, rkey);
   const uri = `at://${handle}/${POST_TYPE}/${rkey}`;
-  const { thread } = await getPostThread(uri);
+  const agent = await getAgentPage(client, `/profile/${handle}/post/${rkey}`);
+  const {
+    data: { thread },
+  } = await agent.getPostThread({ uri });
   // if (isNotFoundPost(thread)) notFound();
   // if (isBlockedPost(thread)) // TODO: handle blocked post
   if (!isThreadViewPost(thread)) notFound();
