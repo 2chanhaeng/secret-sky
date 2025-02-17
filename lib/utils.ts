@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { BlobRef } from "@atproto/api";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -17,3 +18,6 @@ export const getParam: //
 
 export const getByteLength = (str: string) =>
   new TextEncoder().encode(str).length;
+
+export const blobRefToUrl = (repo: string, blobRef: BlobRef) =>
+  `/img/${repo}/${blobRef.ref.toString()}.${blobRef.mimeType.split("/")[1]}`;

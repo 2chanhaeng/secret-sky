@@ -19,6 +19,9 @@ export {
   isMain as isImageEmbed,
   isView as isImageView,
 } from "@atproto/api/dist/client/types/app/bsky/embed/images";
+export {
+  isMain as isExternalEmbed,
+} from "@atproto/api/dist/client/types/app/bsky/embed/external";
 
 export const isObj = (v: unknown): v is object =>
   typeof v === "object" && v !== null;
