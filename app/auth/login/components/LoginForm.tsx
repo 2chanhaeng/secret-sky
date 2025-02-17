@@ -9,6 +9,7 @@ import { getProfile } from "@/lib/api";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useProfile } from "@/hooks/use-profile";
+import Spinner from "@/components/Spinner";
 
 const formSchema = z.object({
   handle: z
@@ -32,11 +33,20 @@ export default function LoginForm({
     reValidateMode: "onSubmit",
   });
   const [handle, setHandle] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { deleteProfile } = useProfile();
+  const errors = getError(form.formState.errors.handle);
+
   useEffect(() => {
-    form.setValue("handle", handle);
-  }, [handle, form]);
-  const setError = (message: string) => form.setError("handle", { message });
+    if (form.formState.isSubmitting)
+      setIsSubmitting(form.formState.isSubmitting);
+    if (errors) setIsSubmitting(false);
+  }, [form.formState.isSubmitting, errors]);
+
+  const setError = (message: string) => {
+    form.setError("handle", { message });
+    setIsSubmitting(false);
+  };
   const onSubmit = onSubmitWhenError(deleteProfile, setError);
   const submit = form.handleSubmit(onSubmit);
   form.setValue("redirectTo", redirectTo);
@@ -44,10 +54,10 @@ export default function LoginForm({
   const onKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      form.setValue("handle", handle);
       submit();
     }
   };
-  const errors = getError(form.formState.errors.handle);
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-2">
@@ -81,9 +91,10 @@ export default function LoginForm({
       />
       <Button
         type="submit"
-        disabled={form.formState.isSubmitting}
+        disabled={isSubmitting}
         className="bg-foreground text-background font-bold"
       >
+        {isSubmitting && <Spinner />}
         Login
       </Button>
     </form>
