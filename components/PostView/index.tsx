@@ -9,7 +9,7 @@ import { parseAtUri, uriToPath } from "@/lib/uri";
 import { ExternalLink, Repeat2 } from "lucide-react";
 import Like from "./Like";
 import { buttonVariants } from "../ui/button";
-import ImageView from "./ImageView";
+import EmbedView from "./EmbedView";
 
 export function MainPostView(post: PostViewType) {
   const { uri, author, record } = post;
@@ -26,7 +26,7 @@ export function MainPostView(post: PostViewType) {
       <section>
         <p className="text-lg">{text}</p>
         <DecryptView facets={facets} uri={uri} />
-        <ImageView uri={uri} embed={embed} />
+        <EmbedView uri={uri} embed={embed} />
       </section>
       <p className="text-foreground/60 text-xs pb-1 flex gap-2">{date}</p>
       <PostFooter {...post} />
@@ -51,7 +51,7 @@ export function SubPostView(post: PostViewType & { kind?: string }) {
         <section className="ml-12">
           <p className="text-base">{text}</p>
           <DecryptView facets={facets} uri={uri} sub />
-          <ImageView uri={uri} embed={embed} />
+          <EmbedView uri={uri} embed={embed} />
         </section>
       </Link>
       <PostFooter {...post} />
@@ -112,7 +112,7 @@ function PostViewContent({
       <section className="ml-12">
         <p className="text-base">{text}</p>
         <DecryptView facets={facets} uri={uri} sub />
-        <ImageView uri={uri} embed={embed} />
+        <EmbedView uri={uri} embed={embed} />
       </section>
     </Link>
   );

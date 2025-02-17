@@ -1,7 +1,6 @@
 import { isImageEmbed } from "@/lib/pred";
 import { parseAtUri } from "@/lib/uri";
-import { cn } from "@/lib/utils";
-import { BlobRef } from "@atproto/api";
+import { blobRefToUrl, cn } from "@/lib/utils";
 import Image from "next/image";
 
 export default function ImageView({
@@ -50,6 +49,3 @@ export default function ImageView({
     </section>
   );
 }
-
-const blobRefToUrl = (repo: string, blobRef: BlobRef) =>
-  `/img/${repo}/${blobRef.ref.$link}.${blobRef.mimeType.split("/")[1]}`;
