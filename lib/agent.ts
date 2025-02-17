@@ -4,6 +4,7 @@ import { Agent } from "@atproto/api";
 import { NodeOAuthClient } from "@atproto/oauth-client-node";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getProfile } from "./api";
 
 export const getAgent: //
   (client: NodeOAuthClient) => Promise<Agent> = //
@@ -27,6 +28,9 @@ export const getAgentPage: //
       .restore(did!)
       .then((session) => new Agent(session))
       .catch(() => null);
-    if (!agent) redirect(`/auth?handle=${did}&redirectTo=${redirectTo}`);
+    if (!agent) {
+      const { handle } = await getProfile(did);
+      redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
+    }
     return agent;
   };

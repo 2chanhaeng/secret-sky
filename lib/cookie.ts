@@ -27,55 +27,38 @@ const decrypt = <Payload>(
 const encryptedCookie = //
   <Payload extends JWTPayload>(key: string) => ({ //
     async create(data: Payload) {
-      try {
-        const session = await encrypt(data);
-        (await cookies()).set(key, session, {
-          httpOnly: true,
-          secure: true,
-          expires: getExpiryFromNow(),
-          sameSite: "lax",
-        });
-      } catch (e) {
-        console.error(`Error creating cookie: ${key}`, e);
-      }
+      const session = await encrypt(data);
+      (await cookies()).set(key, session, {
+        httpOnly: true,
+        secure: true,
+        expires: getExpiryFromNow(),
+        sameSite: "lax",
+      });
     },
 
     async update() {
-      try {
-        const session = (await cookies()).get(key)?.value;
-        const payload = await decrypt(session);
+      const session = (await cookies()).get(key)?.value;
+      const payload = await decrypt(session);
 
-        if (!session || !payload) return;
+      if (!session || !payload) return;
 
-        (await cookies()).set(key, session, {
-          httpOnly: true,
-          secure: true,
-          expires: getExpiryFromNow(),
-          sameSite: "lax",
-        });
-      } catch (e) {
-        console.error(`Error updating cookie: ${key}`, e);
-      }
+      (await cookies()).set(key, session, {
+        httpOnly: true,
+        secure: true,
+        expires: getExpiryFromNow(),
+        sameSite: "lax",
+      });
     },
 
     async get(): Promise<Payload | undefined> {
-      try {
-        const cookie = (await cookies()).get(key);
-        if (!cookie) return;
-        const value = await decrypt(cookie?.value);
-        return value as Payload | undefined;
-      } catch (e) {
-        console.error(`Error getting cookie: ${key}`, e);
-        (await cookies()).delete(key);
-      }
+      const cookie = (await cookies()).get(key);
+      if (!cookie) return;
+      const value = await decrypt(cookie?.value);
+      return value as Payload | undefined;
     },
 
     async _delete() {
-      try {
-        (await cookies()).delete(key);
-      } catch (e) {
-        console.error(`Error deleting cookie: ${key}`, e);
-      }
+      (await cookies()).delete(key);
     },
   });
 
