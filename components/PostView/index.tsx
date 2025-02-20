@@ -1,15 +1,13 @@
 import { isPostRecord, isPostView, isReasonRepost } from "@/lib/pred";
 import AuthorInfo from "../AuthorInfo";
 import DecryptView from "./DecryptView";
-import Mention from "./Mention";
 import { Facet, FeedViewPost, PostViewType, ReplyRef } from "@/types/bsky";
 import Link from "next/link";
 import { uriToPath } from "@/lib/uri";
-import { EllipsisVertical, ExternalLink, Repeat2 } from "lucide-react";
-import Like from "./Like";
-import { buttonVariants } from "../ui/button";
+import { EllipsisVertical, Repeat2 } from "lucide-react";
 import EmbedView from "./EmbedView";
 import AuthorAvatar from "../AuthorAvatar";
+import PostFooter from "./PostFooter";
 
 export function MainPostView(post: PostViewType) {
   const { uri, author, record } = post;
@@ -141,52 +139,5 @@ function FeedPostView(post: PostViewType | undefined) {
       <PostViewContent uri={uri} text={text} facets={facets} embed={embed} />
       <PostFooter {...post} />
     </article>
-  );
-}
-
-function PostFooter({
-  uri,
-  viewer,
-  replyCount,
-  likeCount,
-  className = "",
-  iconSize = 16,
-}: PostViewType & {
-  className?: string;
-  iconSize?: number;
-}) {
-  return (
-    <section
-      className={`text-foreground/60 text-xs flex justify-between has-[>:only-child]:justify-end ${className}`}
-    >
-      <Mention
-        count={replyCount}
-        uri={uri}
-        viewer={viewer}
-        iconSize={iconSize}
-      />
-      <Like uri={uri} count={likeCount} viewer={viewer} iconSize={iconSize} />
-      <LinkToBskyApp uri={uri} iconSize={iconSize} />
-    </section>
-  );
-}
-
-function LinkToBskyApp({
-  uri,
-  className,
-  iconSize = 16,
-}: {
-  uri: string;
-  className?: string;
-  iconSize: number;
-}) {
-  const path = uriToPath(uri);
-  return (
-    <Link
-      href={`https://bsky.app${path}`}
-      className={`${buttonVariants({ variant: "ghost" })} ${className}`}
-    >
-      <ExternalLink className="inline" size={iconSize} />
-    </Link>
   );
 }

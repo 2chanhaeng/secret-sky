@@ -1,23 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
 import { Viewer } from "@/types/bsky";
 import { getPostThread } from "@/lib/api";
 import { isThreadViewPost } from "@/lib/pred";
+import { VariantProps } from "class-variance-authority";
 
 export default function Like({
   uri,
   count: initialCount = 0,
   viewer,
+  size = "sm",
   iconSize = 16,
+  className,
 }: {
   uri: string;
   viewer?: Viewer;
   count?: number;
+  size?: VariantProps<typeof buttonVariants>["size"];
   iconSize?: number;
+  className?: string;
 }) {
   const [liked, setLiked] = useState(!!viewer?.like);
   const [count, setCount] = useState(initialCount);
@@ -39,8 +44,9 @@ export default function Like({
   return (
     <Button
       onClick={handleClick}
-      className={cn({ "text-red-500": liked })}
+      className={cn(className, { "text-red-500": liked })}
       variant="ghost"
+      size={size}
     >
       <Heart fill={liked ? "currentColor" : "transparent"} size={iconSize} />
       {count > 0 ? ` ${count}` : ""}
