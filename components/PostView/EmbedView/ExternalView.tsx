@@ -1,4 +1,4 @@
-import { isExternalEmbed } from "@/lib/pred";
+import { isExternalEmbed, isExternalView } from "@/lib/pred";
 import { parseAtUri } from "@/lib/uri";
 import { blobRefToUrl } from "@/lib/utils";
 import { BlobRef } from "@atproto/api";
@@ -12,21 +12,21 @@ export default function ExternalView({
   uri: string;
   embed: unknown;
 }) {
-  if (!isExternalEmbed(embed)) return null;
+  if (!isExternalEmbed(embed) && !isExternalView(embed)) return null;
   const {
     external: { description, title, uri: url, thumb },
   } = embed;
   const [repo] = parseAtUri(uri);
   return (
     <Link href={url} target="_blank" rel="noopener noreferrer">
-      <section className="rounded-lg overflow-hidden flex flex-col gap-1 border">
+      <section className="rounded-lg overflow-hidden flex flex-col border divide-y">
         <ExternalThumb repo={repo} thumb={thumb} alt={title} />
-        <p className="p-2">
-          <h3 className="font-bold">{title}</h3>
-          <span className="text-sm/5 line-clamp-2 line text-foreground/60">
+        <div className="p-2">
+          <h3 className="font-bold">{title || url}</h3>
+          <p className="text-sm/5 line-clamp-2 line text-foreground/60">
             {description}
-          </span>
-        </p>
+          </p>
+        </div>
       </section>
     </Link>
   );
@@ -38,7 +38,7 @@ function ExternalThumb({
   alt,
 }: {
   repo: string;
-  thumb: BlobRef | undefined;
+  thumb: BlobRef | string | undefined;
   alt: string;
 }) {
   if (!thumb) return null;
@@ -49,7 +49,7 @@ function ExternalThumb({
       height={1080}
       src={thumbnail}
       alt={alt}
-      className="aspect-video"
+      className="aspect-video object-cover"
     />
   );
 }
