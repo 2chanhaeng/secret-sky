@@ -1,5 +1,6 @@
 import ExternalView from "./ExternalView";
 import ImageView from "./ImageView";
+import QuoteView from "./QuoteView";
 
 export default function EmbedView({
   uri,
@@ -12,6 +13,7 @@ export default function EmbedView({
     <>
       <ImageView uri={uri} embed={embed} />
       <ExternalView uri={uri} embed={embed} />
+      <QuoteView uri={uri} embed={embed} />
     </>
   );
 }
