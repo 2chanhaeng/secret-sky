@@ -1,4 +1,5 @@
 import Mention from "./Mention";
+import Repost from "./Repost";
 import Like from "./Like";
 import LinkToBskyApp from "./LinkToBsky";
 import { PostViewType } from "@/types/bsky";
@@ -8,6 +9,7 @@ export default function PostFooter({
   viewer,
   replyCount,
   likeCount,
+  repostCount,
   className = "",
   iconSize = 16,
   buttonsClassName: _buttonsClassName,
@@ -24,6 +26,13 @@ export default function PostFooter({
       <Mention
         count={replyCount}
         uri={uri}
+        viewer={viewer}
+        iconSize={iconSize}
+        className={buttonsClassName}
+      />
+      <Repost
+        uri={uri}
+        count={repostCount}
         viewer={viewer}
         iconSize={iconSize}
         className={buttonsClassName}
