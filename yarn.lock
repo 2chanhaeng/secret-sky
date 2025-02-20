@@ -124,14 +124,6 @@
     "@atproto/jwk" "0.1.1"
     jose "^5.2.0"
 
-"@atproto/jwk-jose@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@atproto/jwk-jose/-/jwk-jose-0.1.4.tgz#c36c4332ce41d612a09492e9f6da479a6b7b2b9b"
-  integrity sha512-JzLn1wUzuLfweznSECdTjSHTxQBEz7Q8oJ4XKjRNludqzyJW8etEH00l1WolLipFxoj1QCG9qy00JmlC59Y6Rw==
-  dependencies:
-    "@atproto/jwk" "0.1.3"
-    jose "^5.2.0"
-
 "@atproto/jwk-webcrypto@0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@atproto/jwk-webcrypto/-/jwk-webcrypto-0.1.2.tgz#d11ebd48575f3d59759ec350102038efd57dbed9"
@@ -144,14 +136,6 @@
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@atproto/jwk/-/jwk-0.1.1.tgz#15bcad4a1778eeb20c82108e0ec55fef45cd07b6"
   integrity sha512-6h/bj1APUk7QcV9t/oA6+9DB5NZx9SZru9x+/pV5oHFI9Xz4ZuM5+dq1PfsJV54pZyqdnZ6W6M717cxoC7q7og==
-  dependencies:
-    multiformats "^9.9.0"
-    zod "^3.23.8"
-
-"@atproto/jwk@0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@atproto/jwk/-/jwk-0.1.3.tgz#c42feb53a39573cf84eeec73c62776d1d2497a55"
-  integrity sha512-5rBgA8Fk4fg6MfNyEQvUnwq1MRn5xZOXYj4oxLuZ549XeNp2Rm2v+psuEkICD+o6pfIoMX4Hw7UTlXDrpsKKlQ==
   dependencies:
     multiformats "^9.9.0"
     zod "^3.23.8"
