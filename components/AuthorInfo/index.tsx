@@ -6,8 +6,8 @@ import Link from "next/link";
 const variants = ["main", "sub", "quoted"] as const;
 type Parts = "container" | "name" | "handle" | "avatar";
 const defaultStyles = {
-  name: "font-semibold",
-  handle: "text-sm text-gray-500",
+  name: "font-semibold line-clamp-1",
+  handle: "text-sm text-gray-500 line-clamp-1",
 } as const;
 const mainStyles = {
   container: "grid grid-cols-[auto_1fr] justify-start space-x-2",
