@@ -14,8 +14,12 @@ export type {
   ViewerState as Viewer,
 } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 export type {
+  Main as ImageEmbed,
   View as ImageViewType,
 } from "@atproto/api/dist/client/types/app/bsky/embed/images";
+export type {
+  ViewRecord,
+} from "@atproto/api/dist/client/types/app/bsky/embed/record";
 export type {
   Record as GeneratorRecord,
 } from "@atproto/api/dist/client/types/app/bsky/feed/generator";
@@ -35,6 +39,9 @@ export type {
   OutputSchema as GetPostThreadResponse,
 } from "@atproto/api/dist/client/types/app/bsky/feed/getPostThread";
 export type {
+  OutputSchema as GetPostsResponse,
+} from "@atproto/api/dist/client/types/app/bsky/feed/getPosts";
+export type {
   OutputSchema as GetFeedResponse,
 } from "@atproto/api/dist/client/types/app/bsky/feed/getFeed";
 export type {
@@ -49,3 +56,6 @@ export type {
 export type {
   ListView,
 } from "@atproto/api/dist/client/types/app/bsky/graph/defs";
+export type {
+  Main as StrongRef,
+} from "@atproto/api/dist/client/types/com/atproto/repo/strongRef";

@@ -19,5 +19,15 @@ export const getParam: //
 export const getByteLength = (str: string) =>
   new TextEncoder().encode(str).length;
 
-export const blobRefToUrl = (repo: string, blobRef: BlobRef) =>
-  `/img/${repo}/${blobRef.ref.toString()}.${blobRef.mimeType.split("/")[1]}`;
+export const blobRefToUrl = (repo: string, blobRef: BlobRef | string) => {
+  if (typeof blobRef === "string") return blobRef;
+  const cid = blobRef.ref?.$link ?? blobRef.ref.toString();
+  const ext = blobRef.mimeType.split("/")[1];
+
+  return `/img/${repo}/${cid}.${ext}`;
+};
+
+export const safeNumber = (
+  n: unknown,
+  or: number = 0,
+) => (typeof n === "number" && !isNaN(n) ? n : or);

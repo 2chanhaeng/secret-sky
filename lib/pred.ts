@@ -21,8 +21,20 @@ export {
 } from "@atproto/api/dist/client/types/app/bsky/embed/images";
 export {
   isMain as isExternalEmbed,
+  isView as isExternalView,
 } from "@atproto/api/dist/client/types/app/bsky/embed/external";
-
+export {
+  isMain as isRecordEmbed,
+  isView as isRecordView,
+  isViewRecord,
+} from "@atproto/api/dist/client/types/app/bsky/embed/record";
+export {
+  isMain as isRecordWithMediaEmbed,
+  isView as isRecordWithMediaView,
+} from "@atproto/api/dist/client/types/app/bsky/embed/recordWithMedia";
+export {
+  isMain as isStrongRef,
+} from "@atproto/api/dist/client/types/com/atproto/repo/strongRef";
 export const isObj = (v: unknown): v is object =>
   typeof v === "object" && v !== null;
 export const hasProp = <K extends PropertyKey>(

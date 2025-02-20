@@ -2,6 +2,7 @@ import {
   FeedView,
   GetFeedResponse,
   GetListFeedResponse,
+  GetPostsResponse,
   GetPostThreadResponse,
   GetRecordResponse,
   ListView,
@@ -13,6 +14,7 @@ import {
   BSKY_GET_LIST_FEED_API,
   BSKY_GET_LISTS_API,
   BSKY_GET_POST_THREAD_API,
+  BSKY_GET_POSTS_API,
   BSKY_GET_PROFILE_API,
   BSKY_GET_RECORD_API,
 } from "./const";
@@ -24,6 +26,8 @@ export const getProfile: (handle: string) => Promise<Profile> = (handle) =>
   fetch(`${BSKY_GET_PROFILE_API}?actor=${handle.replace("@", "")}`).then(parse);
 export const getPostThread: (uri: string) => Promise<GetPostThreadResponse> = //
   (uri) => fetch(`${BSKY_GET_POST_THREAD_API}?uri=${uri}`).then(parse);
+export const getPosts: (uris: string[]) => Promise<GetPostsResponse> = //
+  (uris) => fetch(`${BSKY_GET_POSTS_API}?uris=${uris.join(",")}`).then(parse);
 export const getRecord: (uri: string) => Promise<GetRecordResponse> = (uri) => {
   const [repo, collection, rkey] = parseAtUri(uri);
   const url =
