@@ -164,13 +164,13 @@ const getTextAndFacets: (agent: Agent) => (
   text: string;
   facets: Facet[];
 }> = (agent) => async ({ uri, open, content }) => {
-  const raw = content ? createPostText(open) : open;
+  const raw = (content ? createPostText(open) : open).trim();
   const { text, facets } = await detectFacets(agent)(raw);
   const encrypted = content
     ? [
       ...facets,
       createDecryptLinkFacet({ text, uri }),
-      await getEncryptedFacet(uri, content),
+      await getEncryptedFacet(uri, content.trim()),
     ]
     : facets;
   return { text, facets: encrypted };
@@ -184,4 +184,4 @@ const getEncryptedFacet = async (uri: string, content: string) => {
 };
 
 const createPostText = (open: string) =>
-  `${open ? "\n\n" + open : ""}\n\n${TEXT_TO_LINK}`;
+  `${open ? open + "\n\n" : ""}${TEXT_TO_LINK}`;
