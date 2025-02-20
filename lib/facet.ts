@@ -7,7 +7,10 @@ import { URL_BASE } from "./url";
 export const detectFacets = (agent: Agent) => async (text: string) => {
   const rt = new RichText({ text });
   await rt.detectFacets(agent);
-  return rt.facets ?? [];
+  return {
+    text: rt.text,
+    facets: rt.facets ?? [],
+  };
 };
 
 export const createEncryptFacet: (props: { encrypted: string }) => Facet = ({

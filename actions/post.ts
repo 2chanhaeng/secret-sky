@@ -136,15 +136,11 @@ const createEncryptedPostRecord: //
   (agent: Agent) => (props: EncryptPostProps) => Promise<CreateRecord> =
     (agent) => async ({ content, open, parent, createdAt, uri }) => {
       const props = { uri, open, content };
-      const { text, facets: encrypted } = await getTextAndFacets(props);
-      const facets = [
-        ...await detectFacets(agent)(text),
-        ...encrypted,
-      ];
+      const { text, facets } = await getTextAndFacets(agent)(props);
       const reply = await getReply(agent)(parent);
       const labels = {
         $type: SELF_LABEL,
-        values: [{ val: NO_AUTH_LABEL }, { val: "!hide" }],
+        values: [{ val: NO_AUTH_LABEL }],
       };
 
       return ({
@@ -162,20 +158,22 @@ const createEncryptedPostRecord: //
       });
     };
 
-const getTextAndFacets: (
+const getTextAndFacets: (agent: Agent) => (
   props: { uri: string; open: string; content: string },
 ) => Promise<{
   text: string;
   facets: Facet[];
-}> = async ({ uri, open, content }) => {
-  const text = content ? createPostText(open) : open;
-  const facets = content
+}> = (agent) => async ({ uri, open, content }) => {
+  const raw = content ? createPostText(open) : open;
+  const { text, facets } = await detectFacets(agent)(raw);
+  const encrypted = content
     ? [
+      ...facets,
       createDecryptLinkFacet({ text, uri }),
       await getEncryptedFacet(uri, content),
     ]
-    : [];
-  return { text, facets };
+    : facets;
+  return { text, facets: encrypted };
 };
 
 const getEncryptedFacet = async (uri: string, content: string) => {
