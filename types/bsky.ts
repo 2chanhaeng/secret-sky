@@ -2,6 +2,7 @@ export type {
   BlobRef,
   BskyPreferences as ProfilePref,
   Facet,
+  ModerationPrefs,
 } from "@atproto/api";
 export type { ProfileViewDetailed as Profile } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 export type {
@@ -51,6 +52,7 @@ export type {
   Create as CreateRecord,
 } from "@atproto/api/dist/client/types/com/atproto/repo/applyWrites";
 export type {
+  MutedWord,
   SavedFeed,
 } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 export type {

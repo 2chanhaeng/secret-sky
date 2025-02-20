@@ -1,8 +1,17 @@
 "use client";
 
+import { useModerationPrefs } from "@/hooks/use-pref";
 import { getFeed, getListFeed } from "@/lib/api";
 import { DEFAULT_TIMELINE_FEED } from "@/lib/const";
-import { FeedViewPost, GetTimelineResponse } from "@/types/bsky";
+import { isPostRecord } from "@/lib/pred";
+import {
+  FeedViewPost,
+  GetTimelineResponse,
+  ModerationPrefs,
+  MutedWord,
+  PostRecord,
+  PostViewType,
+} from "@/types/bsky";
 import { FeedInfo } from "@/types/feed";
 import { FeedViewPostWithKey } from "@/types/timeline";
 import { redirect } from "next/navigation";
@@ -29,6 +38,7 @@ export const useFeedStore = (): FeedStoreType => {
   const [posts, setPosts] = useState<FeedViewPostWithKey[]>([]);
   const [cursor, setCursor] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const mod = useModerationPrefs();
 
   useEffect(() => {
     setPosts([]);
@@ -40,34 +50,103 @@ export const useFeedStore = (): FeedStoreType => {
     setIsUpdating(true);
     const { feed: posts, cursor: newCursor = "" } = //
       await fetchFeed(feed)(cursor);
-    setPosts(updatePosts(posts));
+    setPosts(updatePosts(posts, mod));
     setCursor(newCursor);
     setIsUpdating(false);
-  }, [feed, cursor, isUpdating]);
-  const change = setFeed;
+  }, [feed, cursor, isUpdating, mod]);
+
   const init = useCallback(async () => {
     if (isUpdating) return;
     setIsUpdating(true);
     const { feed: posts, cursor: newCursor = "" } = //
       await fetchFeed(feed)("");
-    setPosts(appendPosts(posts));
+    setPosts(appendPosts(posts, mod));
     setCursor(newCursor);
     setIsUpdating(false);
-  }, [feed, isUpdating]);
+  }, [feed, isUpdating, mod]);
 
-  return { feed, posts, update, change, init };
+  if (!mod) return INIT_TIMELINE_FEED;
+
+  return { feed, posts, update, change: setFeed, init };
 };
 
-const updatePosts = (news: FeedViewPost[]) => (prev: FeedViewPostWithKey[]) => {
-  const keyset = new Set(prev.map(({ key }) => key));
-  const toAdd = appendKeys(news).filter((post) => !keyset.has(post.key));
-  return [...prev, ...toAdd];
+const updatePosts =
+  (news: FeedViewPost[], mod: ModerationPrefs | undefined) =>
+  (prev: FeedViewPostWithKey[]) => {
+    const keyset = new Set(prev.map(({ key }) => key));
+    const notMuted = appendKeys(news) //
+      .filter(isPostWithKeyAndRecord)
+      .filter((post) => !keyset.has(post.key)); //
+    const toAdd = removeMutedPosts(mod)(notMuted);
+
+    return [...prev, ...toAdd];
+  };
+
+interface PostWithKeyAndRecord extends FeedViewPostWithKey {
+  post: PostViewType & {
+    record: PostRecord;
+  };
+}
+
+const appendPosts =
+  (news: FeedViewPost[], mod: ModerationPrefs | undefined) =>
+  (prev: FeedViewPostWithKey[]) => {
+    const keyset = new Set(prev.map(({ key }) => key));
+    const notMuted = appendKeys(news) //
+      .filter(isPostWithKeyAndRecord)
+      .filter((post) => !keyset.has(post.key)); //
+    const toAdd = removeMutedPosts(mod)(notMuted);
+    return [...toAdd, ...prev];
+  };
+const isPostWithKeyAndRecord = (
+  post: FeedViewPostWithKey,
+): post is PostWithKeyAndRecord => isPostRecord(post.post.record);
+
+const removeMutedPosts =
+  (mod: ModerationPrefs | undefined) => (posts: PostWithKeyAndRecord[]) => {
+    const mutedPosts = new Set(mod?.hiddenPosts ?? []);
+    const { muteFromAll, muteExcludeFollowing } = getMutedWords(mod);
+    return posts
+      .filter((post) => (post.post.author.viewer?.muted ?? false) === false)
+      .filter((post) => !mutedPosts.has(post.post.uri))
+      .filter((post) =>
+        !muteFromAll.some((word) => post.post.record.text.includes(word))
+      )
+      .filter((post) =>
+        !post.post.author.viewer?.following &&
+        !muteExcludeFollowing.some((word) =>
+          post.post.record.text.includes(word)
+        )
+      );
+  };
+
+const getMutedWords = (mod: ModerationPrefs | undefined) => {
+  if (!mod || !mod.mutedWords) {
+    return {
+      muteFromAll: [],
+      muteExcludeFollowing: [],
+    };
+  }
+  const filters = mod.mutedWords.map(getMutedWord).filter((word) =>
+    word !== null
+  );
+  const muteFromAll = filters //
+    .filter(({ excludeFollowing }) => !excludeFollowing) //
+    .map(({ word, tagOnly }) => tagOnly ? `#${word}` : word);
+  const muteExcludeFollowing = filters //
+    .filter(({ excludeFollowing }) => excludeFollowing) //
+    .map(({ word, tagOnly }) => tagOnly ? `#${word}` : word);
+  return { muteFromAll, muteExcludeFollowing };
 };
 
-const appendPosts = (news: FeedViewPost[]) => (prev: FeedViewPostWithKey[]) => {
-  const keyset = new Set(prev.map(({ key }) => key));
-  const toAdd = appendKeys(news).filter((post) => !keyset.has(post.key));
-  return [...toAdd, ...prev];
+const getMutedWord = (word: MutedWord) => {
+  const { value, actorTarget, targets, expiresAt } = word;
+  if (expiresAt && new Date(expiresAt) < new Date()) return null;
+  return {
+    word: value,
+    excludeFollowing: actorTarget === "exclude-following",
+    tagOnly: !targets.some((target) => target === "content"),
+  };
 };
 
 const fetchFeed = ({
