@@ -53,7 +53,13 @@ export const post = async (
     parent = undefined,
     open = "",
   } = Object.fromEntries(form) as Record<string, string>; //
-  const postProps = { content, open, parent, createdAt, uri };
+  const postProps = {
+    content: content.trim(),
+    open: open.trim(),
+    parent,
+    createdAt,
+    uri,
+  };
   const valid = validInput(postProps);
   if (valid) {
     return {
@@ -164,13 +170,13 @@ const getTextAndFacets: (agent: Agent) => (
   text: string;
   facets: Facet[];
 }> = (agent) => async ({ uri, open, content }) => {
-  const raw = (content ? createPostText(open) : open).trim();
+  const raw = content ? createPostText(open) : open;
   const { text, facets } = await detectFacets(agent)(raw);
   const encrypted = content
     ? [
       ...facets,
       createDecryptLinkFacet({ text, uri }),
-      await getEncryptedFacet(uri, content.trim()),
+      await getEncryptedFacet(uri, content),
     ]
     : facets;
   return { text, facets: encrypted };
