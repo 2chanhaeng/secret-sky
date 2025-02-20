@@ -4,12 +4,12 @@ import DecryptView from "./DecryptView";
 import Mention from "./Mention";
 import { Facet, FeedViewPost, PostViewType, ReplyRef } from "@/types/bsky";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { parseAtUri, uriToPath } from "@/lib/uri";
-import { ExternalLink, Repeat2 } from "lucide-react";
+import { uriToPath } from "@/lib/uri";
+import { EllipsisVertical, ExternalLink, Repeat2 } from "lucide-react";
 import Like from "./Like";
 import { buttonVariants } from "../ui/button";
 import EmbedView from "./EmbedView";
+import AuthorAvatar from "../AuthorAvatar";
 
 export function MainPostView(post: PostViewType) {
   const { uri, author, record } = post;
@@ -34,64 +34,36 @@ export function MainPostView(post: PostViewType) {
   );
 }
 
-export function SubPostView(post: PostViewType & { kind?: string }) {
-  const { uri, author, record, kind = "sub", embed } = post;
+export function SubPostView(post: PostViewType) {
+  const { uri, author, record, embed } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
   return (
-    <article
-      className={cn("border-foreground/20 py-2 my-2", {
-        "border-t": kind === "reply",
-        "border-b": kind !== "reply",
-      })}
-    >
-      <AuthorInfo {...author} />
-      <Link href={`/profile/${author.handle}/post/${uri.split("/").pop()}`}>
-        <section className="ml-12">
+    <article className="border-foreground/20 py-2 mt-2 border-t flex gap-2">
+      <div className="col-span-full">
+        <AuthorAvatar {...author} />
+      </div>
+      <section className="w-full">
+        <AuthorInfo {...author} variant="sub" />
+        <Link href={`/profile/${author.handle}/post/${uri.split("/").pop()}`}>
           <p className="text-base">{text}</p>
           <DecryptView facets={facets} uri={uri} sub />
           <EmbedView uri={uri} embed={embed} />
-        </section>
-      </Link>
-      <PostFooter {...post} />
+        </Link>
+        <PostFooter {...post} />
+      </section>
     </article>
   );
 }
 
-function LinkToBskyApp({
-  uri,
-  className,
-  iconSize = 16,
-}: {
-  uri: string;
-  className?: string;
-  iconSize: number;
-}) {
-  const path = uriToPath(uri);
+export function FeedThreadView({ post, reason, reply }: FeedViewPost) {
   return (
-    <Link
-      href={`https://bsky.app${path}`}
-      className={`${buttonVariants({ variant: "ghost" })} ${className}`}
-    >
-      <ExternalLink className="inline" size={iconSize} />
-    </Link>
-  );
-}
-
-export function FeedPostView({ post, reason, reply }: FeedViewPost) {
-  const { record, uri, author } = post;
-  if (!isPostRecord(record)) return null;
-  const { text: raw, facets, embed } = record;
-  const text = raw.replace(/\n\n비밀글 보기$/, "");
-  return (
-    <article className="border-foreground/20 py-2 my-2 border-t">
+    <section className="border-foreground/20 py-2 border-t flex flex-col gap-2">
       <RepostBy {...reason} />
       {!reason && <RootParent {...reply} />}
-      <AuthorInfo {...author} />
-      <PostViewContent uri={uri} text={text} facets={facets} embed={embed} />
-      <PostFooter {...post} />
-    </article>
+      <FeedPostView {...post} />
+    </section>
   );
 }
 
@@ -106,14 +78,12 @@ function PostViewContent({
   facets?: Facet[];
   embed: unknown;
 }) {
-  const [repo, , rkey] = parseAtUri(uri);
+  const path = uriToPath(uri);
   return (
-    <Link href={`/profile/${repo}/post/${rkey}`}>
-      <section className="ml-12">
-        <p className="text-base">{text}</p>
-        <DecryptView facets={facets} uri={uri} sub />
-        <EmbedView uri={uri} embed={embed} />
-      </section>
+    <Link href={path}>
+      <p className="text-base">{text}</p>
+      <DecryptView facets={facets} uri={uri} sub />
+      <EmbedView uri={uri} embed={embed} />
     </Link>
   );
 }
@@ -134,28 +104,46 @@ function RootParent(reply: Partial<ReplyRef>) {
   if (!reply) return null;
   const { root, parent } = reply;
   const isDifferent = root?.uri !== parent?.uri;
+  const url = (root?.uri as string) || (parent?.uri as string);
+  const path = url ? uriToPath(url) : "";
   return (
     <>
-      {isDifferent && <ParentPostView {...root} />}
+      {isDifferent && (
+        <>
+          <ParentPostView {...root} />
+          <Link className="mx-auto" href={path}>
+            <EllipsisVertical size={16} className="text-foreground/60" />
+          </Link>
+        </>
+      )}
       <ParentPostView {...parent} />
     </>
   );
 }
 
-export function ParentPostView(post: Record<string, unknown> | undefined) {
+function ParentPostView(post: Record<string, unknown> | undefined) {
   if (!isPostView(post)) return null;
-  const { record, uri, author, embed } = post;
+  return <FeedPostView {...post} />;
+}
+
+function FeedPostView(post: PostViewType | undefined) {
+  if (!post) return null;
+  const { author, uri, embed, record } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
   return (
-    <>
-      <AuthorInfo {...author} />
+    <article className="grid grid-flow-col grid-cols-[auto_1fr] gap-x-2 gap-y-1 col-span-full">
+      <div className="row-span-3">
+        <AuthorAvatar {...author} />
+      </div>
+      <AuthorInfo {...author} variant="sub" />
       <PostViewContent uri={uri} text={text} facets={facets} embed={embed} />
       <PostFooter {...post} />
-    </>
+    </article>
   );
 }
+
 function PostFooter({
   uri,
   viewer,
@@ -169,7 +157,7 @@ function PostFooter({
 }) {
   return (
     <section
-      className={`ml-12 text-foreground/60 text-xs flex justify-between has-[>:only-child]:justify-end ${className}`}
+      className={`text-foreground/60 text-xs flex justify-between has-[>:only-child]:justify-end ${className}`}
     >
       <Mention
         count={replyCount}
@@ -180,5 +168,25 @@ function PostFooter({
       <Like uri={uri} count={likeCount} viewer={viewer} iconSize={iconSize} />
       <LinkToBskyApp uri={uri} iconSize={iconSize} />
     </section>
+  );
+}
+
+function LinkToBskyApp({
+  uri,
+  className,
+  iconSize = 16,
+}: {
+  uri: string;
+  className?: string;
+  iconSize: number;
+}) {
+  const path = uriToPath(uri);
+  return (
+    <Link
+      href={`https://bsky.app${path}`}
+      className={`${buttonVariants({ variant: "ghost" })} ${className}`}
+    >
+      <ExternalLink className="inline" size={iconSize} />
+    </Link>
   );
 }

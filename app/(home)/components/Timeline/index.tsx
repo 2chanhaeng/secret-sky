@@ -1,7 +1,7 @@
 "use client";
 
 import Observer from "@/components/Observer";
-import { FeedPostView } from "@/components/PostView";
+import { FeedThreadView } from "@/components/PostView";
 import { useTimeline } from "@/context/timeline";
 
 export default function Timeline() {
@@ -11,10 +11,10 @@ export default function Timeline() {
     <section style={{ overflowAnchor: "none" }}>
       {posts.map(({ key, ...post }, i, { length }) =>
         i !== length - 10 ? (
-          <FeedPostView key={key} {...post} />
+          <FeedThreadView key={key} {...post} />
         ) : (
           <>
-            <FeedPostView key={key} {...post} />
+            <FeedThreadView key={key} {...post} />
             <Observer callback={update} />
           </>
         )

@@ -36,7 +36,6 @@ export default async function PostPage({
         .map((reply) => (
           <SubPostView
             key={(reply.post as PostViewType)!.uri}
-            kind="reply"
             {...(reply.post as PostViewType)}
           />
         ))}
