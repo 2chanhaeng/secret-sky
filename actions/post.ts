@@ -186,4 +186,4 @@ const getEncryptedFacet = async (uri: string, content: string) => {
 };
 
 const createPostText = (open: string) =>
-  `#그늘셀프${open ? "\n\n" + open : ""}\n\n${TEXT_TO_LINK}`;
+  `${open ? "\n\n" + open : ""}\n\n${TEXT_TO_LINK}`;
