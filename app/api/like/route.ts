@@ -1,5 +1,3 @@
-"use server";
-
 import { getAgent } from "@/lib/agent";
 import client from "@/lib/client";
 import { isThreadViewPost } from "@/lib/pred";

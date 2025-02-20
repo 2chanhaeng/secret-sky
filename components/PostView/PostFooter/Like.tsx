@@ -5,8 +5,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
 import { Viewer } from "@/types/bsky";
-import { getPostThread } from "@/lib/api";
-import { isThreadViewPost } from "@/lib/pred";
+import { getPosts } from "@/lib/api";
+import { isPostView } from "@/lib/pred";
 import { VariantProps } from "class-variance-authority";
 
 export default function Like({
@@ -34,10 +34,9 @@ export default function Like({
     setLiked((prev) => !prev);
     toggleLike(uri)
       .then(setLiked)
-      .then(() => getPostThread(uri))
+      .then(() => getPosts([uri]))
       .then(
-        ({ thread }) =>
-          isThreadViewPost(thread) && setCount(thread.post.likeCount ?? 0)
+        ({ posts: [post] }) => isPostView(post) && setCount(post.likeCount ?? 0)
       );
   };
 
