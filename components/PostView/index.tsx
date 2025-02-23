@@ -81,7 +81,6 @@ function PostViewContent({
     <Link href={path}>
       <p className="text-base">{text}</p>
       <DecryptView facets={facets} uri={uri} sub />
-      <EmbedView uri={uri} embed={embed} />
     </Link>
   );
 }
@@ -131,13 +130,16 @@ function FeedPostView(post: PostViewType | undefined) {
   const { text: raw, facets } = record;
   const text = raw.replace(/\n\n비밀글 보기$/, "");
   return (
-    <article className="grid grid-flow-col grid-cols-[auto_1fr] gap-x-2 gap-y-1 col-span-full">
-      <div className="row-span-3">
+    <article className="flex gap-2 col-span-full">
+      <div className="">
         <AuthorAvatar {...author} />
       </div>
-      <AuthorInfo {...author} variant="sub" />
-      <PostViewContent uri={uri} text={text} facets={facets} embed={embed} />
-      <PostFooter {...post} />
+      <div className="flex flex-col gap-1">
+        <AuthorInfo {...author} variant="sub" />
+        <PostViewContent uri={uri} text={text} facets={facets} embed={embed} />
+        <EmbedView uri={uri} embed={embed} />
+        <PostFooter {...post} />
+      </div>
     </article>
   );
 }
