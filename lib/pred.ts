@@ -20,6 +20,10 @@ export {
   isView as isImageView,
 } from "@atproto/api/dist/client/types/app/bsky/embed/images";
 export {
+  isMain as isVideoEmbed,
+  isView as isVideoView,
+} from "@atproto/api/dist/client/types/app/bsky/embed/video";
+export {
   isMain as isExternalEmbed,
   isView as isExternalView,
 } from "@atproto/api/dist/client/types/app/bsky/embed/external";

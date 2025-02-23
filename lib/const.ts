@@ -38,3 +38,5 @@ export const DEFAULT_TIMELINE_FEED = {
 export const BSKY_CDN_URL = "https://cdn.bsky.app/img";
 export const BSKY_CDN_IMAGE_PATH = `${BSKY_CDN_URL}/feed_fullsize/plain`;
 export const BSKY_CDN_THUMB_PATH = `${BSKY_CDN_URL}/feed_thumbnail/plain`;
+export const BSKY_VIDEO_CDN = "https://video.bsky.app";
+export const BSKY_VIDEO_CDN_PATH = `${BSKY_VIDEO_CDN}/watch`;

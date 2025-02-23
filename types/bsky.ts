@@ -19,6 +19,10 @@ export type {
   View as ImageViewType,
 } from "@atproto/api/dist/client/types/app/bsky/embed/images";
 export type {
+  Main as VideoEmbed,
+  View as VideoViewType,
+} from "@atproto/api/dist/client/types/app/bsky/embed/video";
+export type {
   ViewRecord,
 } from "@atproto/api/dist/client/types/app/bsky/embed/record";
 export type {
