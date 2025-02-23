@@ -15,7 +15,6 @@ import {
 } from "@/types/threadgate";
 import { CreateRecord, Facet } from "@/types/bsky";
 import type { Agent } from "@atproto/api";
-import { redirect } from "next/navigation";
 import { generateTID } from "@/lib/tid";
 import {
   APPLY_WRITE_TYPE,
@@ -66,6 +65,7 @@ export const post = async (
       message: valid,
       open,
       content,
+      href: "",
     };
   }
   try {
@@ -89,6 +89,7 @@ export const post = async (
         message: "작성 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
         open,
         content,
+        href: "",
       };
     }
   } catch (e) {
@@ -98,11 +99,12 @@ export const post = async (
         "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요. 문제가 지속될 경우 개발자에게 문의해주세요.",
       open,
       content,
+      href: "",
     };
   }
 
   const href = uriToPath(uri);
-  redirect(href);
+  return { message: "", open: "", content: "", href };
 };
 
 const getThreadgate: (form: FormData) => ThreadgateType[] = (form) =>
