@@ -3,7 +3,7 @@
 import { useModerationPrefs } from "@/hooks/use-pref";
 import { getFeed, getListFeed } from "@/lib/api";
 import { DEFAULT_TIMELINE_FEED } from "@/lib/const";
-import { isPostRecord } from "@/lib/pred";
+import { isPostRecord, isReasonRepost } from "@/lib/pred";
 import {
   FeedViewPost,
   GetTimelineResponse,
@@ -78,7 +78,6 @@ const updatePosts =
       .filter(isPostWithKeyAndRecord)
       .filter((post) => !keyset.has(post.key)); //
     const toAdd = removeMutedPosts(mod)(notMuted);
-
     return [...prev, ...toAdd];
   };
 
@@ -108,17 +107,23 @@ const removeMutedPosts =
     const { muteFromAll, muteExcludeFollowing } = getMutedWords(mod);
     return posts
       .filter((post) => (post.post.author.viewer?.muted ?? false) === false)
+      .filter((post) => (getMutedIfRepost(post) ?? false) === false)
       .filter((post) => !mutedPosts.has(post.post.uri))
       .filter((post) =>
+        muteFromAll.length <= 0 ||
         !muteFromAll.some((word) => post.post.record.text.includes(word))
       )
       .filter((post) =>
-        !post.post.author.viewer?.following &&
+        muteExcludeFollowing.length <= 0 ||
+        post.post.author.viewer?.following ||
         !muteExcludeFollowing.some((word) =>
           post.post.record.text.includes(word)
         )
       );
   };
+
+const getMutedIfRepost = (post: FeedViewPostWithKey) =>
+  post.reason && isReasonRepost(post.reason) && post.reason.by?.viewer?.muted;
 
 const getMutedWords = (mod: ModerationPrefs | undefined) => {
   if (!mod || !mod.mutedWords) {
