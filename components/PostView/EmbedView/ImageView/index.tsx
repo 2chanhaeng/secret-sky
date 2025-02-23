@@ -1,3 +1,4 @@
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   isImageEmbed,
   isRecordWithMediaEmbed,
@@ -23,32 +24,59 @@ export default function ImageView({
     const { width, height } = regulateAspectRatio(ratio);
     return (
       <section className="rounded-lg overflow-hidden h-fit max-h-[80vh] min-h-24 w-full object-center">
-        <Image
-          key={src}
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          className="object-cover h-full w-full"
-        />
+        <Dialog>
+          <DialogTrigger>
+            <Image
+              key={src}
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              className="object-cover h-full w-full"
+            />
+          </DialogTrigger>
+          <DialogContent className="p-0 rounded-none">
+            <Image
+              key={src}
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              className="object-cover h-full w-full"
+            />
+          </DialogContent>
+        </Dialog>
       </section>
     );
   }
   return (
     <section className="rounded-lg overflow-hidden grid grid-cols-2 gap-1 aspect-video">
       {images.map(({ src, alt, width, height }, index, { length }) => (
-        <Image
-          key={src}
-          src={src}
-          alt={alt}
-          width={width}
-          height={height}
-          className={cn("object-cover object-center", {
-            "row-span-2 aspect-[5/7]":
-              length === 2 || (length === 3 && index === 0),
-            "aspect-video": length === 4,
-          })}
-        />
+        <Dialog key={src}>
+          <DialogTrigger>
+            <Image
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              className={cn("object-cover object-center", {
+                "row-span-2 aspect-[5/7]":
+                  length === 2 || (length === 3 && index === 0),
+                "aspect-video": length === 4,
+              })}
+            />
+          </DialogTrigger>
+          <DialogContent className="p-0 rounded-none bg-transparent">
+            <Image
+              key={src}
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              className="object-cover h-full w-full "
+            />
+          </DialogContent>
+        </Dialog>
       ))}
     </section>
   );
