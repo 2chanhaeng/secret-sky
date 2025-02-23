@@ -31,3 +31,19 @@ export const safeNumber = (
   n: unknown,
   or: number = 0,
 ) => (typeof n === "number" && !isNaN(n) ? n : or);
+
+export const regulateAspectRatio = (
+  props: {
+    width: number;
+    height: number;
+  } | undefined,
+) => {
+  if (!props) return { width: 1920, height: 1080 };
+  const { width, height } = props;
+  const aspectRatio = safeNumber(width / height, 1);
+  if (aspectRatio > 1) {
+    return { width: 1920, height: 1080 / aspectRatio };
+  } else {
+    return { width: 1920 * aspectRatio, height: 1080 };
+  }
+};

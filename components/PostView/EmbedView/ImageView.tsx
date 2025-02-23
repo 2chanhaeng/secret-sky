@@ -5,7 +5,7 @@ import {
   isRecordWithMediaView,
 } from "@/lib/pred";
 import { parseAtUri } from "@/lib/uri";
-import { blobRefToUrl, cn, safeNumber } from "@/lib/utils";
+import { blobRefToUrl, cn, regulateAspectRatio, safeNumber } from "@/lib/utils";
 import Image from "next/image";
 
 export default function ImageView({
@@ -88,19 +88,4 @@ const extractImages = (repo: string, embed: unknown) => {
     }));
   }
   return [];
-};
-
-const regulateAspectRatio = ({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) => {
-  const aspectRatio = safeNumber(width / height, 1);
-  if (aspectRatio > 1) {
-    return { width: 1920, height: 1080 / aspectRatio };
-  } else {
-    return { width: 1920 * aspectRatio, height: 1080 };
-  }
 };
