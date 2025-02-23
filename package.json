@@ -26,6 +26,7 @@
     "next": "15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hls-player": "^3.0.7",
     "react-hook-form": "^7.54.2",
     "react-indexed-db-hook": "^1.0.14",
     "tailwind-merge": "^2.6.0",
