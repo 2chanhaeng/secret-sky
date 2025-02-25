@@ -1,21 +1,20 @@
-import ExternalView from "./ExternalView";
-import ImageView from "./ImageView";
+import ExceptQuoteView from "./ExceptQuoteView";
 import QuoteView from "./QuoteView";
-import VideoView from "./VideoView";
 
 export default function EmbedView({
   uri,
   embed,
+  sub,
 }: {
   uri: string;
   embed: unknown;
+  sub?: boolean;
+  quoted?: boolean;
 }) {
   return (
     <>
-      <ImageView uri={uri} embed={embed} />
-      <VideoView uri={uri} embed={embed} />
-      <ExternalView uri={uri} embed={embed} />
-      <QuoteView uri={uri} embed={embed} />
+      <ExceptQuoteView uri={uri} embed={embed} sub={sub} />
+      <QuoteView uri={uri} embed={embed} sub={sub} />
     </>
   );
 }

@@ -3,15 +3,17 @@ import DecryptFacetView from "../../DecryptFacetView";
 import AuthorInfo from "@/components/AuthorInfo";
 import Link from "next/link";
 import { parseAtUri } from "@/lib/uri";
-import ImageView from "../ImageView";
 import { PostViewType, ViewRecord } from "@/types/bsky";
+import ExceptQuoteView from "../ExceptQuoteView";
 
 const CLASSNAME = "rounded-lg overflow-hidden gap-1 border flex flex-col";
 
 export default function QuotedPostView({
   post,
+  sub,
 }: {
   post: PostViewType | ViewRecord;
+  sub?: boolean;
 }) {
   const { author, uri } = post;
   const record =
@@ -30,7 +32,7 @@ export default function QuotedPostView({
         <p>{text}</p>
         <DecryptFacetView facets={facets} uri={uri} />
       </Link>
-      <ImageView uri={uri} embed={embed} />
+      <ExceptQuoteView uri={uri} embed={embed} sub={sub} />
     </article>
   );
 }
