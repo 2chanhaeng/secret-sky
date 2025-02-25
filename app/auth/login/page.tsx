@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import LoginForm from "./components/LoginForm";
+import LoginForm from "@/components/LoginForm";
 
 export default async function LoginPage({
   searchParams,
@@ -9,9 +9,9 @@ export default async function LoginPage({
   const { redirectTo } = await searchParams;
   return (
     <main>
-      <Card>
+      <Card className="mt-20">
         <CardHeader className="text-center text-2xl">Login</CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
           <LoginForm redirectTo={redirectTo} />
         </CardContent>
       </Card>

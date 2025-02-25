@@ -1,4 +1,4 @@
-import LoginForm from "@/app/auth/login/components/LoginForm";
+import LoginForm from "@/components/LoginForm";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
