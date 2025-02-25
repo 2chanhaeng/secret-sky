@@ -9,6 +9,7 @@ import EmbedView from "./EmbedView";
 import AuthorAvatar from "../AuthorAvatar";
 import PostFooter from "./PostFooter";
 import { removeSuffixLink } from "@/lib/utils";
+import PostText from "./PostText";
 
 export function MainPostView(post: PostViewType) {
   const { uri, author, record } = post;
@@ -23,7 +24,7 @@ export function MainPostView(post: PostViewType) {
     <article>
       <AuthorInfo {...author} />
       <section>
-        <p className="text-lg">{text}</p>
+        <PostText text={text} facets={facets} className="text-lg" />
         <DecryptFacetView facets={facets} uri={uri} />
         <EmbedView uri={uri} embed={embed} />
       </section>
@@ -46,7 +47,7 @@ export function SubPostView(post: PostViewType) {
       <section className="w-full">
         <AuthorInfo {...author} variant="sub" />
         <Link href={`/profile/${author.handle}/post/${uri.split("/").pop()}`}>
-          <p className="text-base">{text}</p>
+          <PostText text={text} facets={facets} className="text-base" />
           <DecryptFacetView facets={facets} uri={uri} sub />
           <EmbedView uri={uri} embed={embed} />
         </Link>
@@ -69,16 +70,17 @@ export function FeedThreadView({ post, reason, reply }: FeedViewPost) {
 function PostViewContent({
   uri,
   text,
-  facets,
+  facets = [],
 }: {
   uri: string;
   text: string;
   facets?: Facet[];
 }) {
   const path = uriToPath(uri);
+
   return (
     <Link href={path}>
-      <p className="text-base">{text}</p>
+      <PostText text={text} facets={facets} className="text-base" />
       <DecryptFacetView facets={facets} uri={uri} sub />
     </Link>
   );

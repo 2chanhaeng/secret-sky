@@ -39,6 +39,12 @@ export {
 export {
   isMain as isStrongRef,
 } from "@atproto/api/dist/client/types/com/atproto/repo/strongRef";
+export {
+  isLink,
+  isMention,
+  isTag,
+} from "@atproto/api/dist/client/types/app/bsky/richtext/facet";
+
 export const isObj = (v: unknown): v is object =>
   typeof v === "object" && v !== null;
 export const hasProp = <K extends PropertyKey>(

@@ -65,4 +65,10 @@ export type {
 export type {
   Main as StrongRef,
 } from "@atproto/api/dist/client/types/com/atproto/repo/strongRef";
+export type {
+  ByteSlice,
+  Link,
+  Mention,
+  Tag,
+} from "@atproto/api/dist/client/types/app/bsky/richtext/facet";
 export type { Encrypted, Main as EncryptedEmbed } from "@/types/secret";
