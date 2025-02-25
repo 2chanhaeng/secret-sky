@@ -25,7 +25,7 @@ export default function ImageView({
     return (
       <section className="rounded-lg overflow-hidden h-fit max-h-[80vh] min-h-24 w-full object-center">
         <Dialog>
-          <DialogTrigger>
+          <DialogTrigger className="h-full">
             <Image
               key={src}
               src={src}
@@ -53,7 +53,7 @@ export default function ImageView({
     <section className="rounded-lg overflow-hidden grid grid-cols-2 gap-1 aspect-video">
       {images.map(({ src, alt, width, height }, index, { length }) => (
         <Dialog key={src}>
-          <DialogTrigger>
+          <DialogTrigger className="h-full">
             <Image
               src={src}
               alt={alt}

@@ -124,8 +124,11 @@ function ParentPostView(post: Record<string, unknown> | undefined) {
 
 function FeedPostView(post: PostViewType | undefined) {
   if (!post) return null;
-  const { author, uri, embed, record } = post;
+  const { author, uri, record } = post;
+  let embed: unknown = post.embed;
+
   if (!isPostRecord(record)) return null;
+  if (!embed) embed = record.embed;
   const { text: raw, facets } = record;
   const text = removeSuffixLink(raw);
   return (
@@ -136,7 +139,7 @@ function FeedPostView(post: PostViewType | undefined) {
       <div className="flex flex-col gap-1 w-full">
         <AuthorInfo {...author} variant="sub" />
         <PostViewContent uri={uri} text={text} facets={facets} />
-        <EmbedView uri={uri} embed={embed} />
+        <EmbedView uri={uri} embed={embed} sub />
         <PostFooter {...post} />
       </div>
     </article>

@@ -14,7 +14,6 @@ export default function VideoView({
   const [repo] = parseAtUri(uri);
   const video = extractVideoView(repo, embed);
   if (!video) return null;
-  console.log(video);
   return (
     <section className="rounded-lg overflow-hidden h-fit max-h-[80vh] min-h-24 w-full object-center">
       <figure>
