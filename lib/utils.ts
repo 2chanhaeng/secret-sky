@@ -47,3 +47,6 @@ export const regulateAspectRatio = (
     return { width: 1920 * aspectRatio, height: 1080 };
   }
 };
+
+export const removeSuffixLink = (text: string) =>
+  text.replace(/\n*비밀글 보기$/, "");

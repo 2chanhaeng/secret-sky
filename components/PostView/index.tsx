@@ -8,6 +8,7 @@ import { EllipsisVertical, Repeat2 } from "lucide-react";
 import EmbedView from "./EmbedView";
 import AuthorAvatar from "../AuthorAvatar";
 import PostFooter from "./PostFooter";
+import { removeSuffixLink } from "@/lib/utils";
 
 export function MainPostView(post: PostViewType) {
   const { uri, author, record } = post;
@@ -17,7 +18,7 @@ export function MainPostView(post: PostViewType) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(createdAt));
-  const text = raw.replace(/\n\n비밀글 보기$/, "");
+  const text = removeSuffixLink(raw);
   return (
     <article>
       <AuthorInfo {...author} />
@@ -36,7 +37,7 @@ export function SubPostView(post: PostViewType) {
   const { uri, author, record, embed } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
-  const text = raw.replace(/\n\n비밀글 보기$/, "");
+  const text = removeSuffixLink(raw);
   return (
     <article className="border-foreground/20 py-2 mt-2 border-t flex gap-2">
       <div className="col-span-full">
@@ -134,7 +135,7 @@ function FeedPostView(post: PostViewType | undefined) {
   const { author, uri, embed, record } = post;
   if (!isPostRecord(record)) return null;
   const { text: raw, facets } = record;
-  const text = raw.replace(/\n\n비밀글 보기$/, "");
+  const text = removeSuffixLink(raw);
   return (
     <article className="flex gap-2 col-span-full">
       <div className="">
