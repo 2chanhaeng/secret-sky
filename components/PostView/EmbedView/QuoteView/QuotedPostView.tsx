@@ -5,6 +5,7 @@ import Link from "next/link";
 import { parseAtUri } from "@/lib/uri";
 import { PostViewType, ViewRecord } from "@/types/bsky";
 import ExceptQuoteView from "../ExceptQuoteView";
+import PostText from "../../PostText";
 
 const CLASSNAME = "rounded-lg overflow-hidden gap-1 border flex flex-col";
 
@@ -29,7 +30,7 @@ export default function QuotedPostView({
     <article className={`${CLASSNAME} p-4`}>
       <AuthorInfo {...author} variant="quoted" />
       <Link href={path}>
-        <p>{text}</p>
+        <PostText text={text} facets={facets} />
         <DecryptFacetView facets={facets} uri={uri} />
       </Link>
       <ExceptQuoteView uri={uri} embed={embed} sub={sub} />
