@@ -2,7 +2,6 @@ import { isExternalEmbed, isExternalView } from "@/lib/pred";
 import { parseAtUri } from "@/lib/uri";
 import { blobRefToUrl } from "@/lib/utils";
 import { BlobRef } from "@atproto/api";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function ExternalView({
@@ -44,7 +43,7 @@ function ExternalThumb({
   if (!thumb) return null;
   const thumbnail = blobRefToUrl(repo, thumb);
   return (
-    <Image
+    <img
       width={1920}
       height={1080}
       src={thumbnail}

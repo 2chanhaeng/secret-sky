@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { BlobRef } from "@atproto/api";
+import { BSKY_CDN_IMAGE_PATH } from "./const";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -22,9 +23,8 @@ export const getByteLength = (str: string) =>
 export const blobRefToUrl = (repo: string, blobRef: BlobRef | string) => {
   if (typeof blobRef === "string") return blobRef;
   const cid = blobRef.ref?.$link ?? blobRef.ref.toString();
-  const ext = blobRef.mimeType.split("/")[1];
 
-  return `/img/${repo}/${cid}.${ext}`;
+  return `${BSKY_CDN_IMAGE_PATH}/${repo}/${cid}@webp`;
 };
 
 export const safeNumber = (

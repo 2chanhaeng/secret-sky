@@ -7,7 +7,6 @@ import {
 } from "@/lib/pred";
 import { parseAtUri } from "@/lib/uri";
 import { blobRefToUrl, cn, regulateAspectRatio, safeNumber } from "@/lib/utils";
-import Image from "next/image";
 
 export default function ImageView({
   uri,
@@ -26,7 +25,7 @@ export default function ImageView({
       <section className="rounded-lg overflow-hidden h-fit max-h-[80vh] min-h-24 w-full object-center">
         <Dialog>
           <DialogTrigger className="h-full">
-            <Image
+            <img
               key={src}
               src={src}
               alt={alt}
@@ -36,7 +35,7 @@ export default function ImageView({
             />
           </DialogTrigger>
           <DialogContent className="p-0 rounded-none">
-            <Image
+            <img
               key={src}
               src={src}
               alt={alt}
@@ -54,7 +53,7 @@ export default function ImageView({
       {images.map(({ src, alt, width, height }, index, { length }) => (
         <Dialog key={src}>
           <DialogTrigger className="h-full">
-            <Image
+            <img
               src={src}
               alt={alt}
               width={width}
@@ -67,7 +66,7 @@ export default function ImageView({
             />
           </DialogTrigger>
           <DialogContent className="p-0 rounded-none bg-transparent">
-            <Image
+            <img
               key={src}
               src={src}
               alt={alt}
