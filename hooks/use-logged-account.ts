@@ -12,7 +12,7 @@ export const useAccountUpdate = (profile: BaseProfile) => {
   }, [db, profile]);
 };
 
-export const useLoggedAccounts = (current: string) => {
+export const useLoggedAccounts = (current: string = "") => {
   const db = useAccountsTable();
   const [accounts, setAccounts] = useState<BaseProfile[]>([]);
   useEffect(() => {
