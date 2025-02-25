@@ -59,7 +59,7 @@ export function FeedThreadView({ post, reason, reply }: FeedViewPost) {
   return (
     <section className="border-foreground/20 py-2 border-t flex flex-col gap-2">
       <RepostBy {...reason} />
-      {!reason && <RootParent {...reply} />}
+      {!reason && <RootParent reply={reply} childAuthor={post.author.did} />}
       <FeedPostView {...post} />
     </section>
   );
@@ -95,9 +95,17 @@ function RepostBy(reason: FeedViewPost["reason"]) {
   );
 }
 
-function RootParent(reply: Partial<ReplyRef>) {
+function RootParent({
+  reply,
+  childAuthor,
+}: {
+  reply?: Partial<ReplyRef>;
+  childAuthor: string;
+}) {
   if (!reply) return null;
   const { root, parent } = reply;
+  if (!isPostView(parent)) return null;
+  if (parent?.author.did === childAuthor) return null;
   const isDifferent = root?.uri !== parent?.uri;
   const url = (root?.uri as string) || (parent?.uri as string);
   const path = url ? uriToPath(url) : "";
