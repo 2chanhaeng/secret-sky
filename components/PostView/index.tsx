@@ -140,7 +140,7 @@ function FeedPostView(post: PostViewType | undefined) {
       <div className="">
         <AuthorAvatar {...author} />
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 w-full">
         <AuthorInfo {...author} variant="sub" />
         <PostViewContent uri={uri} text={text} facets={facets} />
         <EmbedView uri={uri} embed={embed} />
