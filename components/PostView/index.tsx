@@ -69,12 +69,10 @@ function PostViewContent({
   uri,
   text,
   facets,
-  embed,
 }: {
   uri: string;
   text: string;
   facets?: Facet[];
-  embed: unknown;
 }) {
   const path = uriToPath(uri);
   return (
@@ -136,7 +134,7 @@ function FeedPostView(post: PostViewType | undefined) {
       </div>
       <div className="flex flex-col gap-1">
         <AuthorInfo {...author} variant="sub" />
-        <PostViewContent uri={uri} text={text} facets={facets} embed={embed} />
+        <PostViewContent uri={uri} text={text} facets={facets} />
         <EmbedView uri={uri} embed={embed} />
         <PostFooter {...post} />
       </div>
