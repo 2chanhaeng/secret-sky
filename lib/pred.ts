@@ -53,3 +53,11 @@ export const isEncryptedFacet = (v: unknown): v is EncryptedValue => (
 );
 export const hasEncryptedFacet = (v: Facet[] | undefined): boolean =>
   v ? v.map(({ features }) => features).flat().some(isEncryptedFacet) : false;
+
+import type { Main as EncryptedEmbed } from "@/types/secret";
+
+export function isEncryptedEmbed(v: unknown): v is EncryptedEmbed {
+  return isObj(v) && hasProp(v, "$type") &&
+    (v.$type === "dev.chomu.embed.secret" ||
+      v.$type === "dev.chomu.embed.secret#main");
+}
