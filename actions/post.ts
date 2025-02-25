@@ -13,11 +13,13 @@ import {
   MentionRule,
   ThreadgateType,
 } from "@/types/threadgate";
-import { CreateRecord, Facet } from "@/types/bsky";
+import { CreateRecord, EncryptedEmbed, Facet } from "@/types/bsky";
 import type { Agent } from "@atproto/api";
 import { generateTID } from "@/lib/tid";
 import {
   APPLY_WRITE_TYPE,
+  EMBED_SECRET_ENCRYPTED_TYPE,
+  EMBED_SECRET_TYPE,
   NO_AUTH_LABEL,
   POST_TYPE,
   SELF_LABEL,
@@ -25,11 +27,7 @@ import {
 } from "@/lib/const";
 import { validateCreate } from "@atproto/api/dist/client/types/com/atproto/repo/applyWrites";
 import { getRkey, uriToPath } from "@/lib/uri";
-import {
-  createDecryptLinkFacet,
-  createEncryptFacet,
-  detectFacets,
-} from "@/lib/facet";
+import { createDecryptLinkFacet, detectFacets } from "@/lib/facet";
 import {
   createDisablePostgateRecord,
   createThreadgateRecord,
@@ -150,6 +148,7 @@ const createEncryptedPostRecord: //
         $type: SELF_LABEL,
         values: [{ val: NO_AUTH_LABEL }],
       };
+      const embed = await createEncryptedEmbed(uri, content);
 
       return ({
         $type: APPLY_WRITE_TYPE,
@@ -162,6 +161,7 @@ const createEncryptedPostRecord: //
           createdAt,
           reply,
           labels,
+          embed,
         },
       });
     };
@@ -178,17 +178,26 @@ const getTextAndFacets: (agent: Agent) => (
     ? [
       ...facets,
       createDecryptLinkFacet({ text, uri }),
-      await getEncryptedFacet(uri, content),
     ]
     : facets;
   return { text, facets: encrypted };
 };
 
-const getEncryptedFacet = async (uri: string, content: string) => {
+const createEncryptedEmbed = async (
+  uri: string,
+  content: string,
+): Promise<EncryptedEmbed> => {
   const key = await genKey();
   const { encrypted, iv } = await encrypt(content, key);
   await prisma.post.create({ data: { key, iv, uri } });
-  return createEncryptFacet({ encrypted });
+
+  return {
+    $type: EMBED_SECRET_TYPE,
+    encrypted: {
+      $type: EMBED_SECRET_ENCRYPTED_TYPE,
+      value: encrypted,
+    },
+  };
 };
 
 const createPostText = (open: string) =>

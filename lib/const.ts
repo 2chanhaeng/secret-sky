@@ -40,3 +40,5 @@ export const BSKY_CDN_IMAGE_PATH = `${BSKY_CDN_URL}/feed_fullsize/plain`;
 export const BSKY_CDN_THUMB_PATH = `${BSKY_CDN_URL}/feed_thumbnail/plain`;
 export const BSKY_VIDEO_CDN = "https://video.bsky.app";
 export const BSKY_VIDEO_CDN_PATH = `${BSKY_VIDEO_CDN}/watch`;
+export const EMBED_SECRET_TYPE = "dev.chomu.embed.secret";
+export const EMBED_SECRET_ENCRYPTED_TYPE = `${EMBED_SECRET_TYPE}#encrypted`;

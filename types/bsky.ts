@@ -65,3 +65,4 @@ export type {
 export type {
   Main as StrongRef,
 } from "@atproto/api/dist/client/types/com/atproto/repo/strongRef";
+export type { Encrypted, Main as EncryptedEmbed } from "@/types/secret";
