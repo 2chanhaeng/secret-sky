@@ -1,5 +1,5 @@
 import { isPostRecord } from "@/lib/pred";
-import DecryptView from "../../DecryptView";
+import DecryptFacetView from "../../DecryptFacetView";
 import AuthorInfo from "@/components/AuthorInfo";
 import Link from "next/link";
 import { parseAtUri } from "@/lib/uri";
@@ -28,7 +28,7 @@ export default function QuotedPostView({
       <AuthorInfo {...author} variant="quoted" />
       <Link href={path}>
         <p>{text}</p>
-        <DecryptView facets={facets} uri={uri} />
+        <DecryptFacetView facets={facets} uri={uri} />
       </Link>
       <ImageView uri={uri} embed={embed} />
     </article>

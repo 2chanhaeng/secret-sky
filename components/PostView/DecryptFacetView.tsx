@@ -6,7 +6,7 @@ import { Facet } from "@atproto/api";
 import { Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function DecryptView({
+export default function DecryptFacetView({
   facets,
   uri,
   sub = false,

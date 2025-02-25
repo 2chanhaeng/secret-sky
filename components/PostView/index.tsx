@@ -1,6 +1,6 @@
 import { isPostRecord, isPostView, isReasonRepost } from "@/lib/pred";
 import AuthorInfo from "../AuthorInfo";
-import DecryptView from "./DecryptView";
+import DecryptFacetView from "./DecryptFacetView";
 import { Facet, FeedViewPost, PostViewType, ReplyRef } from "@/types/bsky";
 import Link from "next/link";
 import { uriToPath } from "@/lib/uri";
@@ -24,7 +24,7 @@ export function MainPostView(post: PostViewType) {
       <AuthorInfo {...author} />
       <section>
         <p className="text-lg">{text}</p>
-        <DecryptView facets={facets} uri={uri} />
+        <DecryptFacetView facets={facets} uri={uri} />
         <EmbedView uri={uri} embed={embed} />
       </section>
       <p className="text-foreground/60 text-xs pb-1 flex gap-2">{date}</p>
@@ -47,7 +47,7 @@ export function SubPostView(post: PostViewType) {
         <AuthorInfo {...author} variant="sub" />
         <Link href={`/profile/${author.handle}/post/${uri.split("/").pop()}`}>
           <p className="text-base">{text}</p>
-          <DecryptView facets={facets} uri={uri} sub />
+          <DecryptFacetView facets={facets} uri={uri} sub />
           <EmbedView uri={uri} embed={embed} />
         </Link>
         <PostFooter {...post} />
@@ -79,7 +79,7 @@ function PostViewContent({
   return (
     <Link href={path}>
       <p className="text-base">{text}</p>
-      <DecryptView facets={facets} uri={uri} sub />
+      <DecryptFacetView facets={facets} uri={uri} sub />
     </Link>
   );
 }
