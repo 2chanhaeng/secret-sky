@@ -16,9 +16,13 @@ export default function VideoView({
   if (!video) return null;
   return (
     <section className="rounded-lg overflow-hidden h-fit max-h-[80vh] min-h-24 w-full object-center">
-      <figure>
+      <figure className="relative h-full w-full">
         <Player {...video} />
-        {video.alt && <figcaption>{video.alt}</figcaption>}
+        {video.alt && (
+          <figcaption className="absolute bottom-0 left-0 right-0 -z-10 overflow-hidden">
+            {video.alt}
+          </figcaption>
+        )}
       </figure>
     </section>
   );
