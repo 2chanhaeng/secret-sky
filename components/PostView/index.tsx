@@ -91,7 +91,7 @@ function RepostBy(reason: FeedViewPost["reason"]) {
   const { handle, displayName } = reason.by;
   const name = displayName || handle;
   return (
-    <span className="text-foreground/60 text-xs flex gap-1 ml-12">
+    <span className="text-foreground/60 text-xs flex gap-1 pl-12">
       <Repeat2 size={16} />
       {name} 님이 재개시함
     </span>
@@ -121,12 +121,14 @@ function RootParent({ reply }: { reply?: ReplyRef }) {
 
 function ParentPostView(post: Record<string, unknown> | undefined) {
   if (!isPostView(post)) return null;
-  return <FeedPostView {...post} />;
+  return <FeedPostView {...post} isParent />;
 }
 
-function FeedPostView(post: PostViewType | undefined) {
+function FeedPostView(
+  post: (PostViewType & { isParent?: boolean }) | undefined
+) {
   if (!post) return null;
-  const { author, uri, record } = post;
+  const { author, uri, record, isParent } = post;
   let embed: unknown = post.embed;
 
   if (!isPostRecord(record)) return null;
@@ -139,7 +141,11 @@ function FeedPostView(post: PostViewType | undefined) {
     <article className="flex gap-2 col-span-full">
       <div>
         <AuthorAvatar {...author} />
-        <Link href={path} className="block h-full" />
+        <Link href={path} className="h-full flex justify-center">
+          {isParent && (
+            <div className="w-0 h-full border-l-2 border-foreground/20"></div>
+          )}
+        </Link>
       </div>
       <div className="flex flex-col gap-1 w-full">
         <AuthorInfo {...author} variant="sub" />
