@@ -133,10 +133,13 @@ function FeedPostView(post: PostViewType | undefined) {
   if (!embed) embed = record.embed;
   const { text: raw, facets } = record;
   const text = removeSuffixLink(raw);
+  const path = uriToPath(uri);
+
   return (
     <article className="flex gap-2 col-span-full">
-      <div className="">
+      <div>
         <AuthorAvatar {...author} />
+        <Link href={path} className="block h-full" />
       </div>
       <div className="flex flex-col gap-1 w-full">
         <AuthorInfo {...author} variant="sub" />
