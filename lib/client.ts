@@ -1,6 +1,7 @@
 import { NodeOAuthClient } from "@atproto/oauth-client-node";
 import { CALLBACK_URL, PUBLIC_URL, URL_BASE } from "./url";
 import { sessions, states } from "./cookie";
+import keyset from "./keyset";
 
 const scopes = ["atproto", "transition:generic"];
 const scope = scopes.join(" ");
@@ -28,9 +29,13 @@ const client = new NodeOAuthClient({
     grant_types: ["authorization_code", "refresh_token"],
     response_types: ["code"],
     application_type: "web",
-    token_endpoint_auth_method: "none",
+    token_endpoint_auth_signing_alg: "ES256",
+    token_endpoint_auth_method: "private_key_jwt",
     dpop_bound_access_tokens: true,
+    jwks_uri: `${URL_BASE}/jwks.json`,
   },
+
+  keyset,
 
   // Interface to store authorization state data (during authorization flows)
   stateStore: {

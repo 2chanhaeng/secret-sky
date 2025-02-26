@@ -1,13 +1,10 @@
 import { NodeSavedSession, NodeSavedState } from "@atproto/oauth-client-node";
-import { EncryptJWT, importPKCS8, jwtDecrypt, JWTPayload } from "jose";
+import { EncryptJWT, importJWK, jwtDecrypt, JWTPayload } from "jose";
 import { cookies } from "next/headers";
 
 const secretKey = process.env.ECDH_PRIVATE_KEY;
 if (!secretKey) throw new Error("ECDH_PRIVATE_KEY not found in environment");
-const encodedKey = await importPKCS8(
-  secretKey.replace(/\\n/g, "\n"),
-  "ECDH-ES",
-);
+const encodedKey = await importJWK(JSON.parse(secretKey), "ECDH-ES");
 
 const getExpiryFromNow = () =>
   new Date(Date.now() + 4 * 7 * 24 * 60 * 60 * 1000);
