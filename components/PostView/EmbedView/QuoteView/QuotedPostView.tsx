@@ -7,8 +7,6 @@ import { PostViewType, ViewRecord } from "@/types/bsky";
 import ExceptQuoteView from "../ExceptQuoteView";
 import PostText from "../../PostText";
 
-const CLASSNAME = "rounded-lg overflow-hidden gap-1 border flex flex-col";
-
 export default function QuotedPostView({
   post,
   sub,
@@ -25,9 +23,8 @@ export default function QuotedPostView({
   const { text, facets, embed } = record;
   const [repo, , rkey] = parseAtUri(uri);
   const path = `/profile/${repo}/post/${rkey}`;
-
   return (
-    <article className={`${CLASSNAME} p-4`}>
+    <article className="rounded-lg overflow-hidden gap-1 border flex flex-col p-4">
       <AuthorInfo {...author} variant="quoted" />
       <Link href={path}>
         <PostText text={text} facets={facets} />

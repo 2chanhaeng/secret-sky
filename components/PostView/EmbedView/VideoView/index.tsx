@@ -35,7 +35,7 @@ const extractVideoView = (
   if (isVideoView(embed)) return embed;
   if (isVideoEmbed(embed)) {
     const { aspectRatio, alt, video } = embed;
-    const cid = video.ref.toString();
+    const cid = video.ref.$link ?? video.ref.toString();
     const thumbnail = `${BSKY_VIDEO_CDN_PATH}/${repo}/${cid}/thumbnail.jpg`;
     const playlist = `${BSKY_VIDEO_CDN_PATH}/${repo}/${cid}/playlist.m3u8`;
     return {
