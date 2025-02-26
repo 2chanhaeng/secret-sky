@@ -1,7 +1,8 @@
+"use client";
+
 import AuthorAvatar from "@/components/AuthorAvatar";
-import { cookies } from "next/headers";
-import { BaseProfile } from "@/types/profile";
 import InnerForm from "./InnerForm";
+import { useProfile } from "@/hooks/use-profile";
 
 export default function PostForm({
   parent,
@@ -18,8 +19,8 @@ export default function PostForm({
   );
 }
 
-async function Author() {
-  const cookie = await cookies();
-  const profile: BaseProfile = JSON.parse(cookie.get("profile")?.value ?? "{}");
+function Author() {
+  const { profile } = useProfile();
+  if (!profile) return null;
   return <AuthorAvatar {...profile} className="size-12" />;
 }

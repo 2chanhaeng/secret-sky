@@ -2,8 +2,9 @@ import { NextRequest } from "next/server";
 import client from "@/lib/client";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
-import { Profile } from "@/types/bsky";
-import { BaseProfile } from "@/types/profile";
+import { getProfile } from "@/lib/api";
+import { setProfile } from "@/actions/profile";
+import { pickProfile } from "@/lib/profile";
 
 export const GET = async (req: NextRequest) => {
   const params = req.nextUrl.searchParams;
@@ -18,34 +19,20 @@ export const GET = async (req: NextRequest) => {
       return ({ session: { sub: "error" } });
     });
   if (sub === "error") return redirect("/auth/login");
-  const profile = await fetchProfile(sub);
-  const stringifiedProfile = JSON.stringify(pickProfile(profile));
+  const profile = await getProfile(sub);
   cookie.set("did", profile.did, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
   });
-  cookie.set("profile", stringifiedProfile, {
+  cookie.set("handle", profile.handle, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
   });
+  setProfile(pickProfile(profile));
 
   const redirectTo = cookie.get("redirectTo")?.value ?? "/";
   cookie.delete("redirectTo");
   return redirect(redirectTo);
 };
-
-const fetchProfile = async (sub: string) =>
-  fetch(
-    "https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=" + sub,
-  ).then((res) => res.json());
-
-const pickProfile = (
-  { did, handle, avatar = "", displayName }: Profile,
-): BaseProfile => ({
-  did,
-  handle,
-  avatar,
-  displayName: displayName ?? handle,
-});

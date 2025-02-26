@@ -11,12 +11,12 @@ import PostForm from "../PostForm";
 export default function NewPost() {
   return (
     <Dialog>
-      <DialogTrigger className="fixed bottom-4 right-4 p-4 bg-blue-500 text-white rounded-full">
+      <DialogTrigger className="sticky bottom-4 right-4 float-end p-4 bg-blue-500 text-white rounded-full">
         <SquarePen />
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[100svh]">
         <DialogHeader>
-          <DialogTitle></DialogTitle>
+          <DialogTitle>새 글 작성하기</DialogTitle>
         </DialogHeader>
         <PostForm />
       </DialogContent>

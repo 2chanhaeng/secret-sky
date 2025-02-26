@@ -1,5 +1,5 @@
 import { appendFile } from "fs/promises";
-import { exportPKCS8, exportSPKI } from "jose";
+import { exportJWK } from "jose";
 
 export const main = () => {
   genAndSaveEcdsaKeys();
@@ -9,7 +9,7 @@ export const main = () => {
 // ECDSA keys
 const genAndSaveEcdsaKeys = async (length: number = 3) =>
   (await Array.fromAsync({ length }, genEcdsaKey)) //
-    .forEach((keys, i) => saveExportedKeyPair(`ECDSA_${i + 1}`)(keys));
+    .forEach((keys, i) => saveKeyPairToSign(`ECDSA_${i + 1}`)(keys));
 const genEcdsaKey = () =>
   crypto.subtle.generateKey(ECDSA_KEY_GEN_PARAMS, true, ["sign", "verify"]);
 const ECDSA_KEY_GEN_PARAMS = {
@@ -19,7 +19,7 @@ const ECDSA_KEY_GEN_PARAMS = {
 
 // ECDH keys
 const genAndSaveEcdhKeys = async (): Promise<void> =>
-  genEcdhKeys().then(saveExportedKeyPair("ECDH"));
+  genEcdhKeys().then(saveKeyPairToEncrypt("ECDH"));
 const genEcdhKeys = (): Promise<CryptoKeyPair> =>
   crypto.subtle.generateKey(ECDH_KEY_GEN_PARAMS, true, [
     "deriveKey",
@@ -30,17 +30,26 @@ const ECDH_KEY_GEN_PARAMS = {
   namedCurve: "P-256",
 } satisfies EcKeyGenParams;
 
-const saveExportedKeyPair: //
+const saveKeyPairToEncrypt: //
   (name: string) => (key: CryptoKeyPair) => void =
     (name) => ({ privateKey, publicKey }) => {
       exportPrivKey(privateKey).then(saveKey(`${name}_PRIVATE_KEY`));
       exportPubKey(publicKey).then(saveKey(`${name}_PUBLIC_KEY`));
     };
 const exportPrivKey = (key: CryptoKey): Promise<string> =>
-  exportPKCS8(key).then(formatKey);
+  exportJWK(key).then(JSON.stringify);
 const exportPubKey = (key: CryptoKey): Promise<string> =>
-  exportSPKI(key).then(formatKey);
-const formatKey = (key: string) => key.trim().replace(/\n/g, "\\n");
+  exportJWK(key).then(JSON.stringify);
+
+const saveKeyPairToSign: //
+  (name: string) => (key: CryptoKeyPair) => void =
+    (name) => ({ privateKey, publicKey }) => {
+      exportSignKey(privateKey).then(saveKey(`${name}_PRIVATE_KEY`));
+      exportPubKey(publicKey).then(saveKey(`${name}_PUBLIC_KEY`));
+    };
+
+const exportSignKey = (key: CryptoKey): Promise<string> =>
+  exportJWK(key).then((key) => ({ ...key, use: "sig" })).then(JSON.stringify);
 
 const saveKey = (name: string) => (key: string) =>
   appendFile(`./.env.local`, `${name}='${key}'\n`);

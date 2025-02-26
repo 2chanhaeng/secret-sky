@@ -4,6 +4,10 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  @media (prefers-color-scheme: dark) {
+    background-color: #050505;
+    color: #fafafa;
+  }
 }
 @layer base {
   :root {
@@ -97,7 +101,7 @@ body {
   }
 
   main {
-    @apply w-[384px] px-2 overflow-y-auto;
+    @apply min-h-[calc(100dvh-57px)] w-full min-w-[384px] max-w-[600px] px-2 overflow-y-auto;
   }
 
   textarea {

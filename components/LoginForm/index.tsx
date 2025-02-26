@@ -8,40 +8,56 @@ import * as z from "zod";
 import { getProfile } from "@/lib/api";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useProfile } from "@/hooks/use-profile";
+import Spinner from "@/components/Spinner";
 
 const formSchema = z.object({
   handle: z
     .string()
     .regex(
-      /^(?=.{1,253}$)(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/,
+      /^(?=.{1,253}$)@?(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/,
       "핸들은 도메인 형식이어야 합니다."
     ),
   redirectTo: z.string().optional(),
 });
 type FormSchema = z.infer<typeof formSchema>;
 
-export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
+export default function LoginForm({
+  redirectTo = "/",
+}: {
+  redirectTo?: string;
+}) {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: { redirectTo, handle: "" },
     reValidateMode: "onSubmit",
   });
   const [handle, setHandle] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { deleteProfile } = useProfile();
+  const errors = getError(form.formState.errors.handle);
+
   useEffect(() => {
-    form.setValue("handle", handle);
-  }, [handle, form]);
-  const setError = (message: string) => form.setError("handle", { message });
-  const onSubmit = onSubmitWhenError(setError);
+    if (form.formState.isSubmitting)
+      setIsSubmitting(form.formState.isSubmitting);
+    if (errors) setIsSubmitting(false);
+  }, [form.formState.isSubmitting, errors]);
+
+  const setError = (message: string) => {
+    form.setError("handle", { message });
+    setIsSubmitting(false);
+  };
+  const onSubmit = onSubmitWhenError(deleteProfile, setError);
   const submit = form.handleSubmit(onSubmit);
   form.setValue("redirectTo", redirectTo);
 
   const onKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      form.setValue("handle", handle);
       submit();
     }
   };
-  const errors = getError(form.formState.errors.handle);
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-2">
@@ -73,7 +89,12 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
         readOnly
         {...form.register("redirectTo")}
       />
-      <Button type="submit" className="bg-foreground text-background font-bold">
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="bg-foreground text-background font-bold"
+      >
+        {isSubmitting && <Spinner />}
         Login
       </Button>
     </form>
@@ -81,12 +102,13 @@ export default function LoginForm({ redirectTo }: { redirectTo?: string }) {
 }
 
 const onSubmitWhenError =
-  (setError: (message: string) => void) =>
+  (deleteProfile: () => void, setError: (message: string) => void) =>
   async ({ handle: raw, redirectTo }: FormSchema) => {
     const handle = raw.toLowerCase().replace(/[@\s]/g, "");
     const res = await getProfile(handle);
     if ("error" in res)
       return setError("핸들에 문제가 있습니다. 다시 확인해주세요.");
+    deleteProfile();
     redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
   };
 const getError = (error: undefined | FieldError) =>

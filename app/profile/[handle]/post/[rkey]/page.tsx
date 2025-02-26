@@ -4,12 +4,11 @@ import {
   /* isBlockedPost, isNotFoundPost  */
   isThreadViewPost,
 } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-import { getAgent } from "@/lib/agent";
-import client from "@/lib/client";
 import { MainPostView, SubPostView } from "@/components/PostView";
 import { PostViewType } from "@/types/bsky";
 import { POST_TYPE } from "@/lib/const";
-import NewPost from "@/components/NewPost";
+import { getAgentPage } from "@/lib/agent";
+import client from "@/lib/client";
 
 export default async function PostPage({
   params,
@@ -18,8 +17,8 @@ export default async function PostPage({
 }) {
   const { handle, rkey } = await params;
   await redirectIfHandleIsDid(handle, rkey);
-  const agent = await getAgent(client, `/profile/${handle}/post/${rkey}`);
   const uri = `at://${handle}/${POST_TYPE}/${rkey}`;
+  const agent = await getAgentPage(client, `/profile/${handle}/post/${rkey}`);
   const {
     data: { thread },
   } = await agent.getPostThread({ uri });
@@ -37,11 +36,9 @@ export default async function PostPage({
         .map((reply) => (
           <SubPostView
             key={(reply.post as PostViewType)!.uri}
-            kind="reply"
             {...(reply.post as PostViewType)}
           />
         ))}
-      <NewPost />
     </main>
   );
 }
