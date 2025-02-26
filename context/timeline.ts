@@ -166,8 +166,8 @@ const fetchFeed = ({
 
 const getTimeline = (cursor: string): Promise<GetTimelineResponse> =>
   fetch(`/api/timeline?cursor=${cursor}`) //
-    .then((res) => res.json()) //
-    .catch(() => redirect("/auth/logout"));
+    .then((res) => res.json())
+    .catch(() => redirect("/auth/refresh"));
 
 const appendKeys = (posts: FeedViewPost[]): FeedViewPostWithKey[] =>
   posts.map((post) => ({ ...post, key: getKey(post) }));

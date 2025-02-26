@@ -25,6 +25,11 @@ export const GET = async (req: NextRequest) => {
     secure: true,
     sameSite: "lax",
   });
+  cookie.set("handle", profile.handle, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+  });
   setProfile(pickProfile(profile));
 
   const redirectTo = cookie.get("redirectTo")?.value ?? "/";
