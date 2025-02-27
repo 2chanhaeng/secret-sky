@@ -44,7 +44,7 @@ export default function DecryptView({
       >
         <Lock className="inline w-4 h-4 mr-1" /> 비밀글
       </span>
-      <p className="mt-2 line-clamp-5">{decrypted}</p>
+      <p className={cn("mt-2", { "line-clamp-5": sub })}>{decrypted}</p>
     </Container>
   );
 }
