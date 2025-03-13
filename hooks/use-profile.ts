@@ -8,14 +8,21 @@ const PREF_API_PATH = "/api/profile";
 
 export const useProfile = create<{
   profile: BaseProfile | null;
+  fetched: boolean;
+  pending: boolean;
   fetchProfile: () => void;
   deleteProfile: () => void;
 }>((set) => ({
   profile: null,
+  fetched: false,
+  pending: false,
   fetchProfile: () =>
-    getProfile() //
+    Promise.resolve() //
+      .then(() => set({ pending: true })) //
+      .then(getProfile)
       .then((profile) => set({ profile })) //
-      .catch(() => set({ profile: null })),
+      .catch(() => set({ profile: null }))
+      .finally(() => set({ pending: false, fetched: true })),
   deleteProfile: () => deleteProfile().then(() => set({ profile: null })),
 }));
 
