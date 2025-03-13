@@ -50,3 +50,6 @@ export const regulateAspectRatio = (
 
 export const removeSuffixLink = (text: string) =>
   text.replace(/\n*비밀글 보기$/, "");
+
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
