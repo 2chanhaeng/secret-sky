@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/drawer";
 import { useDeleteAccount } from "@/hooks/use-logged-account";
 import { useProfile } from "@/hooks/use-profile";
+import { usePathname } from "next/navigation";
 
 export function NavigationProfileFooter() {
   return (
@@ -23,6 +24,7 @@ export function NavigationProfileFooter() {
 }
 
 function AddAccount() {
+  const redirectTo = usePathname();
   return (
     <Drawer>
       <DrawerTrigger>
@@ -34,7 +36,7 @@ function AddAccount() {
         <DrawerHeader>
           <DrawerTitle>계정 추가</DrawerTitle>
           <DrawerDescription className="pt-4">
-            <LoginForm redirectTo="/" />
+            <LoginForm redirectTo={redirectTo} />
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-4 pt-0">

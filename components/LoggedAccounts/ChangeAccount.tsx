@@ -10,7 +10,8 @@ export default function ChangeAccount({
   displayName,
   handle,
   did,
-}: BaseProfile) {
+  redirectTo,
+}: BaseProfile & { redirectTo?: string }) {
   const { deleteProfile } = useProfile();
   return (
     <div className="py-2 px-4 flex justify-between items-center">
@@ -18,9 +19,9 @@ export default function ChangeAccount({
         key={did}
         onClick={() => {
           deleteProfile();
-          redirect(`/auth?handle=${handle}`);
+          redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
         }}
-        className="flex justify-start items-center gap-2"
+        className="flex justify-start items-center gap-2 w-full"
       >
         <Avatar className="size-8">
           <AvatarImage src={avatar} alt={handle} />
