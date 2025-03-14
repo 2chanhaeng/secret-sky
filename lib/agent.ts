@@ -16,11 +16,9 @@ export const getAgent: //
     const agent = await client
       .restore(did!)
       .then((session) => new Agent(session))
-      .catch(({ message }) =>
-        typeof message === "string" ? (message as string) : null
-      );
+      .catch(({ message }) => isStr(message) ? message : null);
     if (!agent) throw new Error("Expired");
-    if (typeof agent === "string") throw new Error(agent);
+    if (isStr(agent)) throw new Error(agent);
     return agent;
   };
 

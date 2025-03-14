@@ -3,6 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { BlobRef } from "@atproto/api";
 import { BSKY_CDN_IMAGE_PATH } from "./const";
+import { isStr } from "./pred";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,7 +22,7 @@ export const getByteLength = (str: string) =>
   new TextEncoder().encode(str).length;
 
 export const blobRefToUrl = (repo: string, blobRef: BlobRef | string) => {
-  if (typeof blobRef === "string") return blobRef;
+  if (isStr(blobRef)) return blobRef;
   const cid = blobRef.ref?.$link ?? blobRef.ref.toString();
 
   return `${BSKY_CDN_IMAGE_PATH}/${repo}/${cid}@webp`;

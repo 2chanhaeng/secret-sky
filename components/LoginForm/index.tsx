@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useProfile } from "@/hooks/use-profile";
 import Spinner from "@/components/Spinner";
 import { DOMAIN_REGEX } from "@/lib/const";
+import { isStr } from "@/lib/pred";
 
 const formSchema = z.object({
   handle: z.string().regex(DOMAIN_REGEX, "핸들은 도메인 형식이어야 합니다."),
@@ -108,4 +109,4 @@ const onSubmitWhenError =
     redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
   };
 const getError = (error: undefined | FieldError) =>
-  error ? (typeof error === "string" ? error : error?.message) : undefined;
+  error ? (isStr(error) ? error : error?.message) : undefined;
