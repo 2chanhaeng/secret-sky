@@ -5,6 +5,8 @@ import { NodeOAuthClient } from "@atproto/oauth-client-node";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getProfile } from "./api";
+import { isStr } from "./pred";
+import { DOMAIN_REGEX } from "./const";
 
 export const getAgent: //
   (client: NodeOAuthClient) => Promise<Agent> = //
@@ -32,8 +34,10 @@ export const getAgentPage: //
       .then((session) => new Agent(session))
       .catch(() => null);
     if (!agent) {
-      const { handle } = await getProfile(did);
-      redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
+      const { handle } = await getProfile(did).catch(() => ({ handle: "" }));
+      if (isStr(handle) && handle.match(DOMAIN_REGEX)) {
+        redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
+      } else redirect(`/auth/login?redirectTo=${redirectTo}`);
     }
     return agent;
   };

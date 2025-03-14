@@ -10,14 +10,10 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useProfile } from "@/hooks/use-profile";
 import Spinner from "@/components/Spinner";
+import { DOMAIN_REGEX } from "@/lib/const";
 
 const formSchema = z.object({
-  handle: z
-    .string()
-    .regex(
-      /^(?=.{1,253}$)@?(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/,
-      "핸들은 도메인 형식이어야 합니다."
-    ),
+  handle: z.string().regex(DOMAIN_REGEX, "핸들은 도메인 형식이어야 합니다."),
   redirectTo: z.string().optional(),
 });
 type FormSchema = z.infer<typeof formSchema>;

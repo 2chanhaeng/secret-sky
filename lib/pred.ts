@@ -45,6 +45,7 @@ export {
   isTag,
 } from "@atproto/api/dist/client/types/app/bsky/richtext/facet";
 
+export const isStr = (v: unknown): v is string => typeof v === "string";
 export const isObj = (v: unknown): v is object =>
   typeof v === "object" && v !== null;
 export const hasProp = <K extends PropertyKey>(
