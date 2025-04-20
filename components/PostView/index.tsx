@@ -35,9 +35,9 @@ export function MainPostView(post: PostViewType) {
 }
 
 export function SubPostView(post: PostViewType) {
-  const { uri, author, record, embed } = post;
+  const { uri, author, record } = post;
   if (!isPostRecord(record)) return null;
-  const { text: raw, facets } = record;
+  const { text: raw, facets, embed } = record;
   const text = removeSuffixLink(raw);
   return (
     <article className="border-foreground/20 py-2 mt-2 border-t flex gap-2">
