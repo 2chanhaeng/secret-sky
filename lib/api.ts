@@ -36,8 +36,10 @@ export const getRecord: (uri: string) => Promise<GetRecordResponse> = (uri) => {
 };
 export const getFeedGenerators: () => Promise<FeedView[]> = () =>
   fetch(BSKY_GET_FEED_GENERATORS_API).then(parse).then(({ feeds }) => feeds);
-export const getLists: () => Promise<ListView[]> = () =>
-  fetch(BSKY_GET_LISTS_API).then(parse).then(({ lists }) => lists);
+export const getLists: (actor: string) => Promise<ListView[]> = (actor) =>
+  fetch(`${BSKY_GET_LISTS_API}?actor=${actor}&limit=100`) //
+    .then(parse)
+    .then(({ lists }) => lists);
 export const getFeed: (
   uri: string,
   cursor: string,
