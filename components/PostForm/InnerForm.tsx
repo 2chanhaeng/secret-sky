@@ -37,6 +37,7 @@ export default function InnerForm({ parent }: { parent?: string }) {
       <section className="rounded-lg p-2 border border-foreground/20 overflow-y-scroll">
         <Textarea
           name="open"
+          className="w-full"
           placeholder="무슨 일이 일어나고 있나요?"
           defaultValue={state?.open ?? ""}
           maxLength={250}
