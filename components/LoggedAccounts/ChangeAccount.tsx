@@ -1,26 +1,23 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDeleteAccount } from "@/hooks/use-logged-account";
-import { useProfile } from "@/hooks/use-profile";
 import { BaseProfile } from "@/types/profile";
 import { XIcon } from "lucide-react";
-import { redirect } from "next/navigation";
 
 export default function ChangeAccount({
   avatar,
   displayName,
   handle,
   did,
-  redirectTo,
 }: BaseProfile & { redirectTo?: string }) {
-  const { deleteProfile } = useProfile();
   return (
     <div className="py-2 px-4 flex justify-between items-center">
       <button
         key={did}
-        onClick={() => {
-          deleteProfile();
-          redirect(`/auth?handle=${handle}&redirectTo=${redirectTo}`);
-        }}
+        name="handle"
+        value={handle}
+        type="submit"
         className="flex justify-start items-center gap-2 w-full"
       >
         <Avatar className="size-8">
