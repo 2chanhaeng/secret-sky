@@ -14,7 +14,7 @@ export default function NewPost() {
       <DialogTrigger className="sticky bottom-4 right-4 float-end p-4 bg-blue-500 text-white rounded-full">
         <SquarePen />
       </DialogTrigger>
-      <DialogContent className="max-h-[100svh]">
+      <DialogContent className="top-12 translate-y-0 px-2">
         <DialogHeader>
           <DialogTitle>새 글 작성하기</DialogTitle>
         </DialogHeader>

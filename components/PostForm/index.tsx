@@ -12,7 +12,7 @@ export default function PostForm({
   className?: string;
 }) {
   return (
-    <section className={`flex gap-2 ${className}`}>
+    <section className={`flex ${className}`}>
       <Author />
       <InnerForm parent={parent} />
     </section>
