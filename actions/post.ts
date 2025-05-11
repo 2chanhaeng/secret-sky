@@ -25,6 +25,7 @@ import {
   createThreadgateRecord,
 } from "@/lib/record";
 import { getReply } from "@/lib/reply";
+import { isMention } from "@/lib/pred";
 
 export const post = async (
   _: undefined | Record<string, string>,
@@ -164,12 +165,14 @@ const getTextAndFacets: (agent: Agent) => (
 }> = (agent) => async ({ uri, open, content }) => {
   const raw = content ? createPostText(open) : open;
   const { text, facets } = await detectFacets(agent)(raw);
-  const encrypted = content
+  const encrypted = (content
     ? [
       ...facets,
       createDecryptLinkFacet({ text, uri }),
     ]
-    : facets;
+    : facets).filter(
+      (f) => !isMention(f.features[0]) || f.features[0].did !== "",
+    );
   return { text, facets: encrypted };
 };
 
