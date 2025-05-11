@@ -2,6 +2,7 @@ import { useEffect, useImperativeHandle, useState } from "react";
 
 export interface TextareaRef {
   clear: () => void;
+  value: string;
 }
 
 export default function Textarea({
@@ -44,6 +45,7 @@ export default function Textarea({
   useImperativeHandle(
     ref,
     () => ({
+      value,
       clear: () => {
         // clear value
         setValue("");
@@ -52,7 +54,7 @@ export default function Textarea({
         }
       },
     }),
-    [dataStoreId]
+    [dataStoreId, value]
   );
 
   return <textarea {...props} value={value} onChange={handleChange} />;
