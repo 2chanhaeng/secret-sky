@@ -4,15 +4,7 @@ import { encrypt, genKey } from "@/lib/aes";
 import { getAgent } from "@/lib/agent";
 import client from "@/lib/client";
 import prisma from "@/prisma";
-import {
-  FOLLOWING_RULE,
-  FollowingRule,
-  LIST_RULE,
-  ListRule,
-  MENTION_RULE,
-  MentionRule,
-  ThreadgateType,
-} from "@/types/threadgate";
+import { LIST_RULE, ListRule, ThreadgateType } from "@/types/threadgate";
 import { CreateRecord, EncryptedEmbed, Facet } from "@/types/bsky";
 import type { Agent } from "@atproto/api";
 import { generateTID } from "@/lib/tid";
@@ -110,9 +102,7 @@ const getThreadgate: (form: FormData) => ThreadgateType[] = (form) =>
     .map((rule) =>
       rule.startsWith("at://")
         ? ({ $type: LIST_RULE, list: rule } as ListRule)
-        : ({
-          $type: rule as typeof MENTION_RULE | typeof FOLLOWING_RULE,
-        } as MentionRule | FollowingRule)
+        : ({ $type: rule } as Exclude<ThreadgateType, ListRule>)
     );
 
 interface EncryptPostProps {

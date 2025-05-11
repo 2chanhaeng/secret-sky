@@ -1,5 +1,6 @@
 export const MENTION_RULE = "app.bsky.feed.threadgate#mentionRule";
 export const FOLLOWING_RULE = "app.bsky.feed.threadgate#followingRule";
+export const FOLLOWER_RULE = "app.bsky.feed.threadgate#followerRule";
 export const LIST_RULE = "app.bsky.feed.threadgate#listRule";
 
 export interface MentionRule {
@@ -7,6 +8,9 @@ export interface MentionRule {
 }
 export interface FollowingRule {
   $type: typeof FOLLOWING_RULE;
+}
+export interface FollowerRule {
+  $type: typeof FOLLOWER_RULE;
 }
 export interface ListRule {
   $type: typeof LIST_RULE;

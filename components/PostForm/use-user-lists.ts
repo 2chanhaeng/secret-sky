@@ -1,11 +1,16 @@
 import { useProfile } from "@/hooks/use-profile";
 import { getLists } from "@/lib/api";
 import { useEffect, useState } from "react";
-import { FOLLOWING_RULE, MENTION_RULE } from "@/types/threadgate";
+import {
+  FOLLOWER_RULE,
+  FOLLOWING_RULE,
+  MENTION_RULE,
+} from "@/types/threadgate";
 import { UserListChoice } from "./types";
 
 const DEFAULT_LISTS = [
   { name: "팔로잉", value: FOLLOWING_RULE, checked: true },
+  { name: "팔로워", value: FOLLOWER_RULE, checked: false },
   { name: "멘션", value: MENTION_RULE, checked: false },
 ];
 
