@@ -12,6 +12,8 @@ import {
   APPLY_WRITE_TYPE,
   EMBED_SECRET_ENCRYPTED_TYPE,
   EMBED_SECRET_TYPE,
+  MAX_CONTENT_LENGTH,
+  MAX_OPEN_LENGTH,
   NO_AUTH_LABEL,
   POST_TYPE,
   SELF_LABEL,
@@ -118,11 +120,11 @@ const validInput = ({ content, open, parent }: EncryptPostProps) => {
   if (!content && !open) {
     return "내용이 없습니다.";
   }
-  if (content && content.length > 1000) {
-    return "비밀글은 1000자 이하로 작성해주세요.";
+  if (content && content.length > MAX_CONTENT_LENGTH) {
+    return `비밀글은 ${MAX_CONTENT_LENGTH}자 이하로 작성해주세요.`;
   }
-  if (open && open.length > 250) {
-    return "공개글은 250자 이하로 작성해주세요.";
+  if (open && open.length > MAX_OPEN_LENGTH) {
+    return `공개글은 ${MAX_OPEN_LENGTH}자 이하로 작성해주세요.`;
   }
   if (parent && !parent.startsWith("at://")) {
     return "부모 글이 올바르지 않습니다.";
