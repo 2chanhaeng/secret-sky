@@ -4,8 +4,11 @@ import {
   /* isBlockedPost, isNotFoundPost  */
   isThreadViewPost,
 } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-import { MainPostView, SubPostView } from "@/components/PostView";
-import { PostViewType } from "@/types/bsky";
+import {
+  MainPostView,
+  RecursiveParentPostView,
+  ReplyPostView,
+} from "@/components/PostView";
 import { POST_TYPE } from "@/lib/const";
 import { getAgentPage } from "@/lib/agent";
 import client from "@/lib/client";
@@ -28,17 +31,12 @@ export default async function PostPage({
   const { post, parent, replies } = thread;
 
   return (
-    <main>
-      {parent && <SubPostView {...(parent.post as PostViewType)} />}
-      <MainPostView {...post} />
-      {replies
-        ?.filter((reply) => (reply?.post as PostViewType)?.uri)
-        .map((reply) => (
-          <SubPostView
-            key={(reply.post as PostViewType)!.uri}
-            {...(reply.post as PostViewType)}
-          />
-        ))}
+    <main className="flex flex-col divide-y divide-foreground/20">
+      <div className="flex flex-col">
+        <RecursiveParentPostView parent={parent} />
+        <MainPostView {...post} />
+      </div>
+      <ReplyPostView replies={replies} />
     </main>
   );
 }

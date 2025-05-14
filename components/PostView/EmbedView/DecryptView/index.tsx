@@ -26,10 +26,10 @@ export default function DecryptView({
       sub={sub}
       href={path}
       className={cn(
-        "relative m-2 mt-4 pt-4 py-2 px-4 border-2 border-foreground/20 bg-foreground/10 rounded-xl",
+        "relative block mt-4 mb-2 p-2 px-3 border-2 border-foreground/20 bg-foreground/10 rounded-xl",
         {
-          "text-2xl": !sub,
-          "text-base mx-0 mb-0": sub,
+          "text-lg": !sub,
+          "text-base ": sub,
         }
       )}
     >

@@ -1,7 +1,18 @@
-import { isPostRecord, isPostView, isReasonRepost } from "@/lib/pred";
+import {
+  isPostRecord,
+  isPostView,
+  isReasonRepost,
+  isThreadViewPost,
+} from "@/lib/pred";
 import AuthorInfo from "../AuthorInfo";
 import DecryptFacetView from "./DecryptFacetView";
-import { Facet, FeedViewPost, PostViewType, ReplyRef } from "@/types/bsky";
+import {
+  Facet,
+  FeedViewPost,
+  PostViewType,
+  ReplyRef,
+  ThreadViewPost,
+} from "@/types/bsky";
 import Link from "next/link";
 import { uriToPath } from "@/lib/uri";
 import { EllipsisVertical, Repeat2 } from "lucide-react";
@@ -21,14 +32,14 @@ export function MainPostView(post: PostViewType) {
   }).format(new Date(createdAt));
   const text = removeSuffixLink(raw);
   return (
-    <article>
+    <article className="py-2">
       <AuthorInfo {...author} />
       <section>
         <PostText text={text} facets={facets} className="text-lg" />
         <DecryptFacetView facets={facets} uri={uri} />
         <EmbedView uri={uri} embed={embed} />
       </section>
-      <p className="text-foreground/60 text-xs pb-1 flex gap-2">{date}</p>
+      <p className="text-foreground/60 text-xs pl-2 pb-1 flex gap-2">{date}</p>
       <PostFooter {...post} />
     </article>
   );
@@ -39,17 +50,19 @@ export function SubPostView(post: PostViewType) {
   if (!isPostRecord(record)) return null;
   const { text: raw, facets, embed } = record;
   const text = removeSuffixLink(raw);
+  const href = `/profile/${author.handle}/post/${uri.split("/").pop()}`;
   return (
-    <article className="border-foreground/20 py-2 mt-2 border-t flex gap-2">
-      <div className="col-span-full">
+    <article className="py-2 flex gap-2">
+      <div className="col-span-full flex flex-col">
         <AuthorAvatar {...author} />
+        <a href={href} className="block grow h-full"></a>
       </div>
       <section className="w-full">
         <AuthorInfo {...author} variant="sub" />
-        <Link href={`/profile/${author.handle}/post/${uri.split("/").pop()}`}>
+        <Link href={href}>
           <PostText text={text} facets={facets} className="text-base" />
           <DecryptFacetView facets={facets} uri={uri} sub />
-          <EmbedView uri={uri} embed={embed} />
+          <EmbedView uri={uri} embed={embed} sub />
         </Link>
         <PostFooter {...post} />
       </section>
@@ -154,5 +167,55 @@ function FeedPostView(
         <PostFooter {...post} />
       </div>
     </article>
+  );
+}
+
+export function RecursiveParentPostView({
+  parent,
+}: {
+  parent: ThreadViewPost["parent"];
+}) {
+  if (!parent) return null;
+  if (!isThreadViewPost(parent)) return null;
+  const { post, parent: grandparent } = parent;
+  return (
+    <>
+      <RecursiveParentPostView parent={grandparent} />
+      <SubPostView {...post} />
+    </>
+  );
+}
+
+export function ReplyPostView({
+  replies,
+}: {
+  replies: ThreadViewPost["replies"];
+}) {
+  return (
+    <>
+      {replies
+        ?.filter((reply) => (reply?.post as PostViewType)?.uri)
+        .map((reply) => (
+          <div key={(reply.post as PostViewType)!.uri}>
+            <RecursiveReplyPostView reply={reply} />
+          </div>
+        ))}
+    </>
+  );
+}
+function RecursiveReplyPostView({
+  reply,
+}: {
+  reply: Exclude<ThreadViewPost["replies"], undefined>[number] | undefined;
+}) {
+  if (!reply) return null;
+  if (!isThreadViewPost(reply)) return null;
+  const { post, replies } = reply;
+  const grandReply = (replies ?? []).filter(isThreadViewPost).at(0);
+  return (
+    <>
+      <SubPostView {...post} />
+      <RecursiveReplyPostView reply={grandReply} />
+    </>
   );
 }

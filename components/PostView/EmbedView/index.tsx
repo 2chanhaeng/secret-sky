@@ -14,7 +14,7 @@ export default function EmbedView({
   return (
     <>
       <ExceptQuoteView uri={uri} embed={embed} sub={sub} />
-      <QuoteView uri={uri} embed={embed} sub={sub} />
+      <QuoteView uri={uri} embed={embed} />
     </>
   );
 }
