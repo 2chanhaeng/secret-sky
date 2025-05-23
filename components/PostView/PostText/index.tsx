@@ -41,7 +41,7 @@ export default function PostText({
         {linkText}
       </Anchor>
     );
-    currentIndex = byteEnd;
+    currentIndex = charEnd;
   });
 
   // 마지막 링크 이후 남은 텍스트 추가
@@ -55,13 +55,17 @@ const getCharIndexFromByteIndex = (text: string, byteIndex: number): number => {
   const encoder = new TextEncoder();
   let cumulativeByteCount = 0;
   for (let i = 0; i < text.length; i++) {
-    const char = text[i];
+    // 서러게이트 쌍일 경우 두 글자를 동시에 처리
+    const char = text.charCodeAt(i) >> 10 == 54
+      ? text.slice(i, i + 2)
+      : text[i];
     const encodedChar = encoder.encode(char);
     // 만약 다음 문자를 포함하면 byteIndex가 이 문자 내에 존재함
     if (cumulativeByteCount + encodedChar.length > byteIndex) {
       return i;
     }
     cumulativeByteCount += encodedChar.length;
+    i += char.length - 1;
   }
   return text.length;
 };
