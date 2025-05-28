@@ -26,6 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <link
+        rel="stylesheet"
+        href="https://esm.sh/@wooorm/starry-night@3/style/both.css"
+      />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

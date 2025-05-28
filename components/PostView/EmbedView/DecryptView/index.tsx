@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { Lock } from "lucide-react";
 import { uriToPath } from "@/lib/uri";
 import Link, { LinkProps } from "next/link";
+import MarkdownParser from "@/components/MarkdownParser";
+import "./decrypted.css";
 
 export default function DecryptView({
   uri,
@@ -44,7 +46,9 @@ export default function DecryptView({
       >
         <Lock className="inline w-4 h-4 mr-1" /> 비밀글
       </span>
-      <p className={cn("mt-2", { "line-clamp-5": sub })}>{decrypted}</p>
+      <p className={cn("decrypted mt-2", { "line-clamp-5": sub })}>
+        <MarkdownParser text={decrypted} />
+      </p>
     </Container>
   );
 }

@@ -1,0 +1,61 @@
+.decrypted {
+  & h1 {
+    font-size: 1.875rem /* 30px */;
+    line-height: 2.25rem /* 36px */;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+  & h2 {
+    font-size: 1.5rem /* 24px */;
+    line-height: 2rem /* 32px */;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  & h3 {
+    font-size: 1.25rem /* 20px */;
+    line-height: 1.75rem /* 28px */;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  & h4,
+  & h5,
+  & h6 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  & a {
+    color: #60a5fa;
+    text-decoration: underline;
+    &:hover {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+  }
+  & ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  & ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  & table {
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    & > th,
+    & > td {
+      border: 1px solid hsl(var(--foreground));
+      padding: 0.5rem;
+      text-align: left;
+    }
+    & > th {
+      background-color: hsl(var(--foreground) / 0.2);
+      font-weight: 600;
+    }
+  }
+  & [aria-hidden="true"] {
+    display: none;
+  }
+}
