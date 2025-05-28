@@ -62,8 +62,8 @@ export function SubPostView(post: PostViewType) {
         <Link href={href}>
           <PostText text={text} facets={facets} className="text-base" />
           <DecryptFacetView facets={facets} uri={uri} sub />
-          <EmbedView uri={uri} embed={embed} sub />
         </Link>
+        <EmbedView uri={uri} embed={embed} sub />
         <PostFooter {...post} />
       </section>
     </article>
