@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { pathToFileURL } from "url";
 
 async function importAndRunMainFunctions() {
   const directoryPath = path.join(__dirname);
@@ -7,7 +8,7 @@ async function importAndRunMainFunctions() {
 
   for (const file of files) {
     if (file.endsWith(".ts") && file !== "index.ts") {
-      const filePath = path.join(directoryPath, file);
+      const filePath = pathToFileURL(path.join(directoryPath, file)).href;
       const mod = await import(filePath);
       if (mod.main && typeof mod.main === "function") {
         mod.main();

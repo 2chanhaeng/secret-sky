@@ -54,7 +54,7 @@ Secret Sky 의 주 기능은 이름에서도 알 수 있듯이 비밀글 작성 
    yarn
    ```
 
-2. **프리빌드 스크립트 실행:** 프로젝트 루트에서 다음 명령어를 실행해 Prisma를 세팅하고 개발에 사용할 비밀 키를 생성합니다. Windows 환경에서 스크립트가 실패할 경우 [이 이슈](https://github.com/2chanhaeng/secret-sky/issues/3)를 참고해 주세요.
+2. **프리빌드 스크립트 실행:** 프로젝트 루트에서 다음 명령어를 실행해 Prisma를 세팅하고 개발에 사용할 비밀 키를 생성합니다.
 
    ```sh
    yarn prebuild
