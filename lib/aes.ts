@@ -1,15 +1,14 @@
 import { b64ToBuf, bufToB64 } from "./base64";
 
-const exportRawKey: (key: CryptoKey) => Promise<string> = (key) =>
+export const exportRawKey: (key: CryptoKey) => Promise<string> = (key) =>
   crypto.subtle.exportKey("raw", key).then(bufToB64);
-const genAesKey: () => Promise<CryptoKey> = () =>
+
+export const genKey: () => Promise<CryptoKey> = () =>
   crypto.subtle.generateKey(
     { name: "AES-GCM", length: 128 },
     true,
     ["encrypt", "decrypt"],
   );
-export const genKey: () => Promise<string> = () =>
-  genAesKey().then(exportRawKey);
 
 export const importAesKeyB64: (key: string) => Promise<CryptoKey> = (key) =>
   crypto.subtle.importKey(
@@ -22,12 +21,11 @@ export const importAesKeyB64: (key: string) => Promise<CryptoKey> = (key) =>
 
 export async function encrypt(
   plain: string,
-  raw: string,
+  key: CryptoKey,
 ): Promise<{ iv: string; encrypted: string }> {
   const iv = crypto.getRandomValues(new Uint8Array(12)); // 12바이트 IV 생성
   const encoder = new TextEncoder();
   const encoded = encoder.encode(plain);
-  const key = await importAesKeyB64(raw);
   const encrypted = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     key,

@@ -1,6 +1,7 @@
 import { UserListChoice } from "../types";
 import ChoiceBadge from "./ChoiceBadge";
 import AllowChoiceInfo from "./Info";
+import LinkToLists from "./LinkToLists";
 
 export default function AllowChoice({ lists }: { lists: UserListChoice[] }) {
   return (
@@ -17,6 +18,7 @@ export default function AllowChoice({ lists }: { lists: UserListChoice[] }) {
           checked={checked}
         />
       ))}
+      <LinkToLists />
     </fieldset>
   );
 }
