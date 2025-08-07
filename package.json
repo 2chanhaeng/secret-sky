@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "prebuild": "yarn prisma generate && yarn tsx prebuild/index.ts",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "bash -c 'set -e && echo \"현재 브랜치 확인 중...\" && [[ $(git branch --show-current) == \"main\" ]] || { echo \"오류: main 브랜치가 아닙니다.\"; exit 1; } && echo \"수정사항 커밋 여부 확인 중...\" && [[ -z $(git status --porcelain) ]] || { echo \"오류: 커밋되지 않은 변경사항이 있습니다.\"; exit 1; } && echo \"deploy 브랜치로 변경 중...\" && git checkout deploy || { echo \"오류: deploy 브랜치로 변경할 수 없습니다.\"; exit 1; } && echo \"main 브랜치에서 변경사항 병합 중...\" && git merge main --no-edit && echo \"origin/deploy로 푸시 중...\" && git push origin deploy && echo \"main 브랜치로 복귀 중...\" && git checkout main && echo \"배포 완료!\"'"
   },
   "overrides": {
     "@radix-ui/react-dismissable-layer": "1.1.4"
