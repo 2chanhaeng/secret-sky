@@ -1,6 +1,6 @@
 "use server";
 
-import { encrypt, genKey } from "@/lib/aes";
+import { encrypt, exportRawKey, genKey } from "@/lib/aes";
 import { getAgent } from "@/lib/agent";
 import client from "@/lib/client";
 import prisma from "@/prisma";
@@ -184,7 +184,8 @@ const createEncryptedEmbed = async (
 ): Promise<EncryptedEmbed> => {
   const key = await genKey();
   const { encrypted, iv } = await encrypt(content, key);
-  await prisma.post.create({ data: { key, iv, uri } });
+  const strKey = await exportRawKey(key);
+  await prisma.post.create({ data: { key: strKey, iv, uri } });
 
   return {
     $type: EMBED_SECRET_TYPE,
