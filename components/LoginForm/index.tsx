@@ -10,11 +10,11 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useProfile } from "@/hooks/use-profile";
 import Spinner from "@/components/Spinner";
-import { DOMAIN_REGEX } from "@/lib/const";
+import { ACTOR_REGEX } from "@/lib/const";
 import { isStr } from "@/lib/pred";
 
 const formSchema = z.object({
-  handle: z.string().regex(DOMAIN_REGEX, "핸들은 도메인 형식이어야 합니다."),
+  handle: z.string().regex(ACTOR_REGEX, "핸들은 도메인 형식이어야 합니다."),
   redirectTo: z.string().optional(),
 });
 type FormSchema = z.infer<typeof formSchema>;

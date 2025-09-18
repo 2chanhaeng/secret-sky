@@ -17,18 +17,18 @@ const getRedirectToFrom = getParam("redirectTo");
 const setRedirectTo = (redirectTo?: string | undefined | null): unknown =>
   redirectTo && cookies().then((c) => c.set("redirectTo", redirectTo));
 
-const validateHandle = (handle: string) =>
-  getProfile(handle).then((data) => {
-    if ("error" in data || data.handle !== handle) {
+const validateHandle = (actor: string) =>
+  getProfile(actor).then((data) => {
+    if ("error" in data || data.handle !== actor && data.did !== actor) {
       redirect("/auth/login?error=true");
     }
-    return data.handle;
+    return data.did;
   });
 const getAuthURL = (handle: string) => client.authorize(handle);
 
-const redirectToAuthorize = async (handle?: string | null) =>
-  handle
-    ? validateHandle(handle)
+const redirectToAuthorize = async (actor?: string | null) =>
+  actor
+    ? validateHandle(actor)
       .then(getAuthURL)
       .then(({ href }) => href)
       .then(redirect)

@@ -45,5 +45,7 @@ export const EMBED_SECRET_ENCRYPTED_TYPE = `${EMBED_SECRET_TYPE}#encrypted`;
 export const OFFICIAL_ACCOUNT_DID = process.env.OFFICIAL_ACCOUNT_DID as string;
 export const DOMAIN_REGEX =
   /^(?=.{1,253}$)@?(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/;
+export const ACTOR_REGEX =
+  /(^(?=.{1,253}$)@?(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$)|(^did:[a-z]+:[a-zA-Z0-9._:%-]*[a-zA-Z0-9._-]$)/;
 export const MAX_OPEN_LENGTH = 250;
 export const MAX_CONTENT_LENGTH = 10000;
